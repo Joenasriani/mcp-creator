@@ -3,556 +3,496 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MCP Creator Local</title>
+  <title>MCP Creator Simple</title>
   <style>
     :root{
-      --bg:#f7f3ea;
-      --ink:#15120d;
-      --muted:#675f52;
-      --line:#201a12;
-      --soft:#eee6d8;
-      --paper:#fffaf1;
-      --accent:#0e7c6b;
-      --accent2:#c56a2d;
-      --danger:#a63d2d;
-      --ok:#1d7d45;
-      --code:#101214;
-      --codetext:#eaf1ea;
+      --bg:#f6f1e7;
+      --paper:#fffaf0;
+      --ink:#16120b;
+      --muted:#6a6256;
+      --line:#211a10;
+      --soft:#efe5d5;
+      --soft2:#e4f2ec;
+      --green:#147461;
+      --orange:#bd6532;
+      --red:#9d3328;
+      --code:#111418;
+      --codetext:#edf4ed;
+      --shadow:7px 7px 0 var(--line);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+    html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
     body{
       background-image:
-        linear-gradient(rgba(21,18,13,.045) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(21,18,13,.045) 1px,transparent 1px);
-      background-size:26px 26px;
+        radial-gradient(circle at 14px 14px, rgba(22,18,11,.07) 1.2px, transparent 1.2px);
+      background-size:28px 28px;
     }
-    .shell{max-width:1180px;margin:0 auto;padding:22px}
-    .top{
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:18px;
-      align-items:stretch;
-      margin-bottom:18px;
+    .wrap{max-width:1160px;margin:0 auto;padding:20px}
+    .hero,.card,.side,.out{background:var(--paper);border:2px solid var(--line);box-shadow:var(--shadow)}
+    .hero{padding:25px;margin-bottom:16px;display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:center}
+    @media(max-width:840px){.hero{grid-template-columns:1fr}.wrap{padding:13px}}
+    .tag{font:800 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--green)}
+    h1{font-size:clamp(34px,6vw,66px);line-height:.92;letter-spacing:-.065em;margin:10px 0}
+    h2{font-size:22px;letter-spacing:-.03em;margin:0 0 10px}
+    h3{font-size:17px;margin:0 0 7px}
+    p,li{color:var(--muted);line-height:1.5}
+    .hero p{font-size:17px;margin:0}
+    .status{border:2px solid var(--line);background:var(--soft2);padding:13px}
+    .status b{display:block;margin-bottom:4px}
+    .layout{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}}
+    .card,.side,.out{padding:17px;margin-bottom:16px}
+    .step{border-top:2px solid var(--line);padding-top:15px;margin-top:15px}
+    .step:first-of-type{border-top:0;padding-top:0;margin-top:0}
+    .stepnum{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:2px solid var(--line);background:var(--ink);color:var(--paper);font-weight:900;margin-right:7px}
+    label{display:block;font-weight:850;margin:12px 0 6px}
+    input,select,textarea{
+      width:100%;background:#fffdf7;border:2px solid var(--line);color:var(--ink);
+      padding:11px;font:inherit;border-radius:0;outline:none
     }
-    @media(max-width:860px){.top{grid-template-columns:1fr}.shell{padding:14px}}
-    .hero,.manual,.panel,.output{
-      background:var(--paper);
-      border:2px solid var(--line);
-      box-shadow:8px 8px 0 var(--line);
+    input:focus,textarea:focus,select:focus{outline:3px solid rgba(20,116,97,.2)}
+    textarea{resize:vertical;min-height:80px}
+    .small{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+    .templates,.abilitygrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:10px}
+    @media(max-width:620px){.templates,.abilitygrid{grid-template-columns:1fr}}
+    .tpl,.ability,.rowbox{
+      border:2px solid var(--line);background:var(--soft);padding:12px;cursor:pointer
     }
-    .hero{padding:26px}
-    .eyebrow{font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-    h1{margin:10px 0 10px;font-size:clamp(34px,6vw,72px);line-height:.92;letter-spacing:-.06em}
-    .hero p{margin:0;color:var(--muted);font-size:17px;line-height:1.55;max-width:760px}
-    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
-    @media(max-width:740px){.steps{grid-template-columns:1fr 1fr}}
-    .step{border:1.6px solid var(--line);background:var(--soft);padding:11px;min-height:86px}
-    .step b{display:block;font-size:13px;margin-bottom:5px}
-    .step span{display:block;font-size:12px;color:var(--muted);line-height:1.35}
-    .manual{padding:18px}
-    .manual h2,.panel h2,.output h2{margin:0;font-size:18px;letter-spacing:-.02em}
-    .manual p,.manual li{color:var(--muted);font-size:14px;line-height:1.55}
-    .manual ol{margin:12px 0 0;padding-left:21px}
-    .grid{display:grid;grid-template-columns:420px 1fr;gap:18px}
-    @media(max-width:960px){.grid{grid-template-columns:1fr}}
-    .panel,.output{padding:18px}
-    .section{border-top:2px solid var(--line);padding-top:15px;margin-top:16px}
-    label{display:block;font-size:13px;font-weight:800;margin:12px 0 6px}
-    .hint{font-size:12.5px;color:var(--muted);line-height:1.45;margin:6px 0 0}
-    input,textarea,select{
-      width:100%;
-      background:#fffdf7;
-      border:2px solid var(--line);
-      color:var(--ink);
-      border-radius:0;
-      padding:11px;
-      font:inherit;
-      outline:none;
-    }
-    textarea{min-height:86px;resize:vertical;line-height:1.45}
-    input:focus,textarea:focus,select:focus{outline:3px solid rgba(14,124,107,.18)}
-    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media(max-width:540px){.row2{grid-template-columns:1fr}}
+    .tpl[aria-selected="true"],.ability[aria-pressed="true"]{background:var(--soft2);outline:4px solid rgba(20,116,97,.2)}
+    .tpl strong,.ability strong{display:block;margin-bottom:5px}
+    .tpl span,.ability span{font-size:12.5px;color:var(--muted);line-height:1.35;display:block}
+    .rows{display:grid;gap:10px;margin-top:10px}
+    .rowbox{background:#fffdf7;cursor:default}
+    .rowtop{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+    .pill{display:inline-flex;align-items:center;background:#efe0cc;border:1.7px solid var(--line);padding:4px 7px;font-size:12px;font-weight:850;margin-bottom:8px}
+    .remove{background:#fff3ef;color:var(--red);box-shadow:none;padding:7px 9px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    @media(max-width:560px){.grid2{grid-template-columns:1fr}}
     button{
-      appearance:none;
-      border:2px solid var(--line);
-      background:var(--ink);
-      color:#fffaf1;
-      padding:11px 13px;
-      font-weight:900;
-      cursor:pointer;
-      box-shadow:4px 4px 0 var(--line);
+      border:2px solid var(--line);background:var(--ink);color:var(--paper);padding:11px 13px;
+      font-weight:900;box-shadow:4px 4px 0 var(--line);cursor:pointer
     }
     button.secondary{background:var(--paper);color:var(--ink)}
     button.soft{background:var(--soft);color:var(--ink)}
     button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line)}
-    .btnbar{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
-    .abilityBtn{width:100%;text-align:left;margin-top:8px;box-shadow:3px 3px 0 var(--line)}
-    .cards{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
-    @media(max-width:560px){.cards{grid-template-columns:1fr}}
-    .template{
-      border:2px solid var(--line);
-      background:var(--soft);
-      padding:12px;
-      cursor:pointer;
-      min-height:102px;
-    }
-    .template[aria-selected="true"]{background:#d9efe9;outline:4px solid rgba(14,124,107,.24)}
-    .template strong{display:block;margin-bottom:5px}
-    .template small{display:block;color:var(--muted);line-height:1.35}
-    .checks{display:grid;gap:7px;margin-top:8px}
-    .checkline{display:flex;gap:8px;align-items:flex-start;border:1.5px solid var(--line);background:#fffdf7;padding:9px}
-    .checkline input{width:auto;margin-top:3px}
-    .item{border:2px solid var(--line);background:#fffdf7;padding:12px;margin-top:10px}
-    .itemhead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
-    .itemhead strong{font-size:14px}
-    .remove{padding:7px 9px;background:#fff3ef;color:var(--danger);box-shadow:none}
-    .notice{border:2px solid var(--line);padding:12px;background:#fff2d2;color:#3e2a06;margin-top:12px;font-size:13px;line-height:1.5}
-    .notice.ok{background:#ddf5e5;color:#103d24}
-    .notice.err{background:#ffe0db;color:#5a160e}
-    .tabs{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}
-    .tab{background:var(--paper);color:var(--ink);box-shadow:none;padding:8px 10px}
-    .tab[aria-selected="true"]{background:var(--accent);color:white}
-    .block{border:2px solid var(--line);background:var(--code);color:var(--codetext);margin-top:12px}
-    .blockhead{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:2px solid #313536;padding:9px 10px;background:#181b1d}
-    .blockhead span{font:800 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.04em}
-    .mini{box-shadow:none;padding:6px 8px;background:#f5efe5;color:var(--ink)}
-    pre{margin:0;padding:13px;overflow:auto;font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre}
-    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0}
+    .btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+    details{border:2px solid var(--line);background:#fffdf7;padding:10px;margin-top:9px}
+    summary{font-weight:850;cursor:pointer}
+    .notice{border:2px solid var(--line);padding:12px;margin-top:12px;background:#fff2d5;color:#3c2a08;font-size:13.5px;line-height:1.45}
+    .notice.good{background:#dcf3e5;color:#103b27}
+    .notice.bad{background:#ffe2dd;color:#57180f}
+    .check{display:flex;gap:9px;align-items:flex-start;border:2px solid var(--line);background:#fffdf7;padding:10px;margin-top:8px}
+    .check input{width:auto;margin-top:3px}
+    .readiness{display:grid;gap:8px;margin-top:10px}
+    .readyitem{border:2px solid var(--line);padding:10px;background:#fffdf7;display:flex;gap:8px;align-items:flex-start}
+    .readyitem.good{background:#e2f3e8}
+    .readyitem.bad{background:#ffe7e2}
+    .tabs{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+    .tab{box-shadow:none;background:var(--paper);color:var(--ink);padding:8px 10px}
+    .tab[aria-selected="true"]{background:var(--green);color:white}
+    .block{border:2px solid var(--line);background:var(--code);color:var(--codetext);margin-top:10px}
+    .blockhead{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#1b1f23;border-bottom:2px solid #34383b;padding:9px}
+    .blockhead span{font:850 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;text-transform:uppercase}
+    .mini{box-shadow:none;background:#f5eddf;color:var(--ink);padding:6px 8px}
+    pre{margin:0;padding:13px;white-space:pre;overflow:auto;font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
+    .empty{border:2px dashed var(--line);background:var(--soft);padding:18px;color:var(--muted);line-height:1.5}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
     @media(max-width:680px){.summary{grid-template-columns:1fr}}
     .summary div{border:2px solid var(--line);background:var(--soft);padding:10px}
-    .summary b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
-    .summary span{font-size:13px;color:var(--muted)}
-    .empty{padding:18px;border:2px dashed var(--line);background:var(--soft);color:var(--muted);line-height:1.55}
-    .footer{font-size:12px;color:var(--muted);margin-top:18px;line-height:1.5}
+    .summary b{display:block;text-transform:uppercase;font-size:11px;letter-spacing:.05em;margin-bottom:5px}
+    .summary span{color:var(--muted);font-size:13px}
+    .footer{color:var(--muted);font-size:12px;line-height:1.45;margin:18px 0 6px}
   </style>
 </head>
 <body>
-  <div class="shell">
-    <section class="top">
-      <div class="hero">
-        <div class="eyebrow">MCP Creator Local</div>
-        <h1>Create AI integrations without starting from code.</h1>
-        <p>Choose what the AI should be allowed to do, add real app connection links, then export a clean MCP package. This local version exports real MCP package files and clearly marks hosted-platform features that require a backend.</p>
-        <div class="steps" aria-label="Four step flow">
-          <div class="step"><b>1. Choose</b><span>Pick a business tool or start custom.</span></div>
-          <div class="step"><b>2. Allow</b><span>Select what the AI may read or do.</span></div>
-          <div class="step"><b>3. Connect</b><span>Add real app links or secure connection details.</span></div>
-          <div class="step"><b>4. Export</b><span>Copy files, run the script, then test in your AI client.</span></div>
-        </div>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="tag">MCP Creator Simple</div>
+        <h1>Make an AI integration in plain steps.</h1>
+        <p>This local app helps a non-technical user describe what an AI should be allowed to do, checks what is missing, then exports a clean MCP package.</p>
       </div>
-      <aside class="manual">
-        <h2>Simple step-by-step guide</h2>
+      <div class="status">
+        <b>What this version honestly does</b>
+        <p>It creates files you can run or hand to a developer. It does not pretend to log in to Gmail, Shopify, or any app by itself. If a real app connection is needed, the app asks for it clearly.</p>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div>
+        <section class="card">
+          <div class="step">
+            <h2><span class="stepnum">1</span>Name the integration</h2>
+            <label for="project">What should we call it?</label>
+            <input id="project" autocomplete="off" inputmode="latin" value="">
+            <p class="small">Example: sales-assistant, invoice-helper, product-catalog-ai</p>
+          </div>
+
+          <div class="step">
+            <h2><span class="stepnum">2</span>Choose what it connects to</h2>
+            <div id="templates" class="templates"></div>
+          </div>
+
+          <div class="step">
+            <h2><span class="stepnum">3</span>Choose what the AI can do</h2>
+            <p class="small">Click an ability to add it. You can remove or edit it below.</p>
+            <div id="abilities" class="abilitygrid"></div>
+            <div class="btns">
+              <button class="secondary" id="addCustomAction">Add custom action</button>
+              <button class="secondary" id="addCustomRead">Add readable source</button>
+              <button class="secondary" id="addCustomInstruction">Add saved instruction</button>
+            </div>
+          </div>
+
+          <div class="step">
+            <h2><span class="stepnum">4</span>Add the real connection links</h2>
+            <p class="small">Only fill what the selected abilities need. The app will not export a package until required links are real.</p>
+            <div id="rows" class="rows"></div>
+          </div>
+
+          <div class="step">
+            <h2><span class="stepnum">5</span>Safety</h2>
+            <label class="check">
+              <input type="checkbox" id="approval" checked>
+              <span><b>Ask before changing business data</b><br><small>Create, edit, and delete actions will require approval text before running.</small></span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="paused">
+              <span><b>Start paused</b><br><small>The integration exports safely turned off until enabled.</small></span>
+            </label>
+          </div>
+
+          <div class="btns">
+            <button id="build">Check and create package</button>
+            <button class="secondary" id="reset">Start over</button>
+          </div>
+          <div id="msg"></div>
+        </section>
+
+        <section class="out">
+          <h2>Exported package</h2>
+          <div id="output" class="empty">Complete the steps above. When everything is ready, your package files will appear here.</div>
+        </section>
+      </div>
+
+      <aside class="side">
+        <h2>Non-dev guide</h2>
         <ol>
-          <li>Give your integration a short name, such as <b>sales-assistant</b>.</li>
-          <li>Pick a template if it matches your business tool.</li>
-          <li>Write abilities in normal words: “Add a lead”, “Search invoices”, “Read product list”.</li>
-          <li>For each ability, paste the real app link the MCP should use.</li>
-          <li>Generate the package. If something is missing, the app explains it before creating files.</li>
+          <li><b>Choose a template.</b> This only helps you start. It does not secretly connect to that app.</li>
+          <li><b>Add abilities.</b> An ability is something the AI is allowed to do, such as “add a lead”.</li>
+          <li><b>Paste real links.</b> A public read link can be a normal page. Private actions usually need a secure secret name.</li>
+          <li><b>Use the readiness check.</b> Green means exportable. Red means something real is missing.</li>
+          <li><b>Run or hand off.</b> Copy the terminal script or download the files.</li>
         </ol>
-        <p><b>Important:</b> real one-click app login, live chat testing, auto-repair, and cloud deployment require a hosted backend. This Lite file produces the real MCP package only when real connection details are entered.</p>
+
+        <details>
+          <summary>What is MCP?</summary>
+          <p>MCP is a standard way for an AI app to use approved abilities and approved information sources. Think of it as a controlled adapter between your AI and your business tools.</p>
+        </details>
+
+        <details>
+          <summary>What is a secure secret name?</summary>
+          <p>It is not the password itself. It is the name of a saved password or access token inside your computer or hosting account, for example COMPANY_API_TOKEN.</p>
+        </details>
+
+        <details>
+          <summary>Why do I still need links?</summary>
+          <p>A local file cannot log in to business apps by magic. To make a real integration, the generated MCP needs a real place to read from or send requests to.</p>
+        </details>
+
+        <div id="readiness" class="readiness"></div>
       </aside>
     </section>
 
-    <section class="grid">
-      <div class="panel">
-        <h2>Build your integration</h2>
-
-        <label for="projectName">Integration name</label>
-        <input id="projectName" value="" autocomplete="off">
-        <p class="hint">Use lowercase letters, numbers, and dashes. Example: sales-assistant</p>
-
-        <div class="section">
-          <h2>Choose a starting point</h2>
-          <div class="cards" id="templateCards"></div>
-          <p class="hint">Templates prepare useful wording only. They do not log in to external apps.</p>
-        </div>
-
-        <div class="section">
-          <h2>What should the AI be allowed to do?</h2>
-          <div id="permissions" class="checks"></div>
-          <div class="btnbar">
-            <button class="secondary" id="addAction">Add action</button>
-            <button class="secondary" id="addReadable">Add readable data</button>
-            <button class="secondary" id="addInstruction">Add saved instruction</button>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>Real connection details</h2>
-          <p class="hint">Each action needs a real app link. Public reading can use a normal web link. Private app actions usually need a secure secret name from your hosting environment.</p>
-          <div id="items"></div>
-        </div>
-
-        <div class="section">
-          <h2>Safety controls</h2>
-          <label class="checkline">
-            <input id="askBeforeChanges" type="checkbox" checked>
-            <span><b>Ask before changing business data</b><br><small>Recommended for create, edit, and delete actions.</small></span>
-          </label>
-          <label class="checkline">
-            <input id="startPaused" type="checkbox">
-            <span><b>Export integration as paused</b><br><small>The generated server refuses requests until enabled.</small></span>
-          </label>
-        </div>
-
-        <div class="btnbar">
-          <button id="generate">Create MCP package</button>
-          <button class="secondary" id="clearAll">Clear</button>
-        </div>
-        <div id="message" aria-live="polite"></div>
-      </div>
-
-      <div class="output">
-        <h2>Package output</h2>
-        <div id="outputArea" class="empty">Complete the steps on the left, then create your MCP package.</div>
-      </div>
-    </section>
-
-    <div class="footer">
-      MCP Creator Local is a local package generator. It does not store data, send data to a server, or claim live app login/deployment features that are not present in this file.
-    </div>
-  </div>
+    <p class="footer">MCP Creator Simple runs locally in your browser. It does not upload your entries anywhere.<br>By Robomarket.ae<br>(C) all rights reserved</p>
+  </main>
 
 <script>
 (function(){
   "use strict";
 
   const templates = [
-    {
-      id:"custom",
-      title:"Custom business app",
-      desc:"Use this when your tool is not listed.",
-      permissions:["Read information","Create new records","Update existing records"]
-    },
-    {
-      id:"sheets",
-      title:"Google Sheets style tracker",
-      desc:"Leads, inventory, orders, budgets, or simple tables.",
-      permissions:["Read rows","Add a new row","Update a row"]
-    },
-    {
-      id:"email",
-      title:"Email assistant",
-      desc:"Search messages, prepare replies, summarize conversations.",
-      permissions:["Search messages","Draft a reply","Summarize a thread"]
-    },
-    {
-      id:"crm",
-      title:"CRM / sales pipeline",
-      desc:"Leads, contacts, follow-ups, and deal status.",
-      permissions:["Find a customer","Add a lead","Update deal status"]
-    },
-    {
-      id:"store",
-      title:"Online store helper",
-      desc:"Products, descriptions, stock, and order checks.",
-      permissions:["Read products","Update a product","Check stock"]
-    },
-    {
-      id:"knowledge",
-      title:"Company knowledge search",
-      desc:"Read public pages or approved internal knowledge links.",
-      permissions:["Read approved pages","Summarize content","Answer from source text"]
-    }
+    {id:"custom", title:"Custom tool", desc:"For any app or internal business system.", abilities:[
+      {kind:"action", label:"Find information", method:"GET"},
+      {kind:"action", label:"Create a record", method:"POST"},
+      {kind:"read", label:"Read approved source"}
+    ]},
+    {id:"sheets", title:"Spreadsheet tracker", desc:"Leads, orders, stock, tasks, budgets.", abilities:[
+      {kind:"action", label:"Search rows", method:"GET"},
+      {kind:"action", label:"Add a row", method:"POST"},
+      {kind:"action", label:"Update a row", method:"PATCH"}
+    ]},
+    {id:"email", title:"Email helper", desc:"Search messages, prepare replies, summarize threads.", abilities:[
+      {kind:"action", label:"Search emails", method:"GET"},
+      {kind:"action", label:"Create draft reply", method:"POST"},
+      {kind:"instruction", label:"Summarize email thread"}
+    ]},
+    {id:"crm", title:"Sales CRM", desc:"Leads, customers, deals, follow-ups.", abilities:[
+      {kind:"action", label:"Find customer", method:"GET"},
+      {kind:"action", label:"Add lead", method:"POST"},
+      {kind:"action", label:"Update deal status", method:"PATCH"}
+    ]},
+    {id:"store", title:"Online store", desc:"Products, stock, orders, descriptions.", abilities:[
+      {kind:"action", label:"Search products", method:"GET"},
+      {kind:"action", label:"Update product", method:"PATCH"},
+      {kind:"read", label:"Read public product catalog"}
+    ]},
+    {id:"knowledge", title:"Knowledge base", desc:"Public pages or approved internal documents.", abilities:[
+      {kind:"read", label:"Read company page"},
+      {kind:"read", label:"Read help center"},
+      {kind:"instruction", label:"Answer only from approved sources"}
+    ]}
   ];
 
-  const state = {
-    template:"custom",
-    items:[],
-    itemCounter:1
-  };
+  const state = {template:"custom", rows:[], counter:1};
+  const $ = id => document.getElementById(id);
 
-  const $ = (id) => document.getElementById(id);
-
-  function slug(value){
-    return String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g,"-")
-      .replace(/^-+|-+$/g,"");
+  function slug(text){
+    return String(text || "").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
   }
-
-  function opId(value){
-    return slug(value).replace(/-/g,"_");
+  function op(text){ return slug(text).replace(/-/g,"_"); }
+  function html(text){ return String(text).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch])); }
+  function code(text){ return String(text || "").replace(/`/g,"\\`").replace(/\$\{/g,"\\${"); }
+  function validUrl(text){
+    try{ const u = new URL(text); return u.protocol === "http:" || u.protocol === "https:"; }catch(e){ return false; }
   }
-
-  function escapeHtml(value){
-    return String(value).replace(/[&<>"']/g, function(char){
-      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char];
-    });
-  }
-
-  function safeText(value){
-    return String(value || "").replace(/`/g,"\\`").replace(/\$\{/g,"\\${");
-  }
-
-  function validUrl(value){
-    try{
-      const u = new URL(value);
-      return u.protocol === "http:" || u.protocol === "https:";
-    }catch(e){
-      return false;
-    }
-  }
-
-  function validResourceUri(value){
-    return /^[a-z][a-z0-9+.-]*:\/\/[^\s]+$/i.test(String(value || ""));
-  }
-
-  function validEnv(value){
-    return value === "" || /^[A-Z][A-Z0-9_]*$/.test(value);
-  }
+  function validEnv(text){ return !text || /^[A-Z][A-Z0-9_]*$/.test(text); }
+  function validResource(text){ return /^[a-z][a-z0-9+.-]*:\/\/[^\s]+$/i.test(String(text || "")); }
 
   function renderTemplates(){
-    $("templateCards").innerHTML = templates.map(function(t){
-      return '<div class="template" role="button" tabindex="0" data-id="'+escapeHtml(t.id)+'" aria-selected="'+(state.template===t.id)+'">' +
-        '<strong>'+escapeHtml(t.title)+'</strong><small>'+escapeHtml(t.desc)+'</small></div>';
-    }).join("");
-    Array.from(document.querySelectorAll(".template")).forEach(function(card){
-      card.addEventListener("click", function(){ chooseTemplate(card.getAttribute("data-id")); });
-      card.addEventListener("keydown", function(event){
-        if(event.key === "Enter" || event.key === " "){
-          event.preventDefault();
-          chooseTemplate(card.getAttribute("data-id"));
-        }
+    $("templates").innerHTML = templates.map(t => (
+      `<div class="tpl" role="button" tabindex="0" data-template="${html(t.id)}" aria-selected="${state.template===t.id}">
+        <strong>${html(t.title)}</strong><span>${html(t.desc)}</span>
+      </div>`
+    )).join("");
+    document.querySelectorAll("[data-template]").forEach(card => {
+      card.addEventListener("click", () => chooseTemplate(card.dataset.template));
+      card.addEventListener("keydown", e => {
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); chooseTemplate(card.dataset.template); }
       });
     });
   }
 
   function chooseTemplate(id){
     state.template = id;
-    const template = templates.find(function(t){ return t.id === id; }) || templates[0];
     renderTemplates();
-    renderPermissions(template.permissions);
-    if(state.items.length === 0){
-      template.permissions.slice(0,2).forEach(function(label){
-        state.items.push(makeItem(label, inferKind(label)));
-      });
-      renderItems();
-    }
+    renderAbilities();
+    updateReadiness();
   }
 
-  function renderPermissions(list){
-    $("permissions").innerHTML = list.map(function(label){
-      return '<button type="button" class="soft abilityBtn" data-add-permission="'+escapeHtml(label)+'">Add: '+escapeHtml(label)+'</button>';
+  function currentTemplate(){
+    return templates.find(t => t.id === state.template) || templates[0];
+  }
+
+  function renderAbilities(){
+    const t = currentTemplate();
+    $("abilities").innerHTML = t.abilities.map((a, idx) => {
+      const existing = state.rows.some(r => r.label === a.label && r.kind === a.kind);
+      return `<button class="ability" type="button" data-ability="${idx}" aria-pressed="${existing}">
+        <strong>${html(a.label)}</strong>
+        <span>${a.kind === "read" ? "AI may read approved information." : a.kind === "instruction" ? "Reusable instruction for the AI." : "AI may perform this action."}</span>
+      </button>`;
     }).join("");
-    Array.from(document.querySelectorAll("[data-add-permission]")).forEach(function(btn){
-      btn.addEventListener("click", function(){
-        const label = btn.getAttribute("data-add-permission") || "New ability";
-        const already = state.items.some(function(item){ return opId(item.label) === opId(label); });
-        if(already){
-          showMessage("That ability is already in your integration.", "err");
-          return;
+    document.querySelectorAll("[data-ability]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const ability = currentTemplate().abilities[Number(btn.dataset.ability)];
+        const exists = state.rows.find(r => r.label === ability.label && r.kind === ability.kind);
+        if(exists){
+          state.rows = state.rows.filter(r => r.id !== exists.id);
+        }else{
+          state.rows.push(makeRow(ability.kind, ability.label, ability.method || "GET"));
         }
-        state.items.push(makeItem(label, inferKind(label)));
-        renderItems();
-        showMessage("Ability added: " + escapeHtml(label), "ok");
+        renderAbilities();
+        renderRows();
+        updateReadiness();
       });
     });
   }
 
-  function inferKind(label){
-    const text = String(label || "").toLowerCase();
-    if(text.includes("read") || text.includes("search") || text.includes("summarize") || text.includes("answer") || text.includes("find") || text.includes("check")) return "read";
-    return "action";
-  }
-
-  function makeItem(label, kind){
-    const id = state.itemCounter++;
-    const name = opId(label || ("ability " + id));
+  function makeRow(kind, label, method){
+    const id = state.counter++;
+    const name = op(label || `ability ${id}`);
     return {
-      id:id,
-      kind:kind || "action",
-      name:name,
-      label:label || "New ability",
-      method:"GET",
-      url:"",
-      secret:"",
-      resourceUri:"business://" + name,
-      instruction:""
+      id, kind, label: label || "New ability", method: method || "GET",
+      link:"", secret:"", source:`business://${name}`,
+      instruction: kind === "instruction" ? `Use clear, accurate business language for ${label || "this task"}.` : ""
     };
   }
 
-  function renderItems(){
-    if(state.items.length === 0){
-      $("items").innerHTML = '<div class="empty">Add at least one action, readable data source, or saved instruction.</div>';
+  function renderRows(){
+    if(!state.rows.length){
+      $("rows").innerHTML = `<div class="empty">No abilities added yet. Choose one above or add a custom ability.</div>`;
       return;
     }
-    $("items").innerHTML = state.items.map(function(item){
-      const base =
-        '<div class="item" data-item="'+item.id+'">' +
-        '<div class="itemhead"><strong>'+escapeHtml(kindTitle(item.kind))+'</strong><button class="remove" data-remove="'+item.id+'">Remove</button></div>' +
-        '<label>Plain name</label>' +
-        '<input data-field="label" value="'+escapeHtml(item.label)+'">' +
-        '<p class="hint">Example: Add lead, Search orders, Read product catalog.</p>';
+    $("rows").innerHTML = state.rows.map(row => {
+      const top = `<div class="rowbox" data-row="${row.id}">
+        <div class="rowtop"><div><span class="pill">${row.kind==="read" ? "Readable data" : row.kind==="instruction" ? "Saved instruction" : "Action"}</span></div><button class="remove" type="button" data-remove="${row.id}">Remove</button></div>
+        <label>Plain name</label>
+        <input data-field="label" value="${html(row.label)}">`;
 
-      if(item.kind === "instruction"){
-        return base +
-          '<label>Saved instruction</label>' +
-          '<textarea data-field="instruction">'+escapeHtml(item.instruction)+'</textarea>' +
-          '<p class="hint">This becomes a reusable AI instruction. It does not call an external app.</p></div>';
+      if(row.kind === "instruction"){
+        return top + `
+          <label>Instruction text</label>
+          <textarea data-field="instruction">${html(row.instruction)}</textarea>
+          <p class="small">This does not call an app. It gives the AI a reusable way to respond.</p>
+        </div>`;
       }
 
-      if(item.kind === "read"){
-        return base +
-          '<label>Readable source link</label>' +
-          '<input data-field="url" value="'+escapeHtml(item.url)+'">' +
-          '<p class="hint">Use a real http or https link the MCP may read.</p>' +
-          '<label>Source name used inside MCP</label>' +
-          '<input data-field="resourceUri" value="'+escapeHtml(item.resourceUri)+'">' +
-          '<p class="hint">Example: business://product-catalog</p>' +
-          '<label>Secret name, only if the source is private</label>' +
-          '<input data-field="secret" value="'+escapeHtml(item.secret)+'">' +
-          '<p class="hint">Example: COMPANY_DOCS_TOKEN. Leave empty for public sources.</p></div>';
+      if(row.kind === "read"){
+        return top + `
+          <label>Real page or source link</label>
+          <input data-field="link" value="${html(row.link)}">
+          <p class="small">Must start with http or https.</p>
+          <label>Readable source name</label>
+          <input data-field="source" value="${html(row.source)}">
+          <p class="small">Example: business://product-catalog</p>
+          <label>Secure secret name, only if private</label>
+          <input data-field="secret" value="${html(row.secret)}">
+          <p class="small">Example: COMPANY_API_TOKEN. Leave empty for public pages.</p>
+        </div>`;
       }
 
-      return base +
-        '<div class="row2"><div><label>What happens</label><select data-field="method">' +
-        selectOption("GET", item.method, "Read or search") +
-        selectOption("POST", item.method, "Create") +
-        selectOption("PUT", item.method, "Replace") +
-        selectOption("PATCH", item.method, "Update") +
-        selectOption("DELETE", item.method, "Delete") +
-        '</select></div><div><label>Secret name, if needed</label><input data-field="secret" value="'+escapeHtml(item.secret)+'"></div></div>' +
-        '<label>Real app action link</label>' +
-        '<input data-field="url" value="'+escapeHtml(item.url)+'">' +
-        '<p class="hint">Use the actual http or https link this action will call. Private apps usually need a secret name above.</p></div>';
+      return top + `
+        <label>Real app action link</label>
+        <input data-field="link" value="${html(row.link)}">
+        <p class="small">Must start with http or https. This is the real place the MCP sends the action.</p>
+        <details>
+          <summary>Advanced settings</summary>
+          <div class="grid2">
+            <div>
+              <label>What happens</label>
+              <select data-field="method">
+                ${opt("GET", row.method, "Read/search")}
+                ${opt("POST", row.method, "Create")}
+                ${opt("PATCH", row.method, "Update")}
+                ${opt("PUT", row.method, "Replace")}
+                ${opt("DELETE", row.method, "Delete")}
+              </select>
+            </div>
+            <div>
+              <label>Secure secret name, if private</label>
+              <input data-field="secret" value="${html(row.secret)}">
+            </div>
+          </div>
+        </details>
+      </div>`;
     }).join("");
 
-    Array.from(document.querySelectorAll("[data-field]")).forEach(function(field){
-      field.addEventListener("input", updateField);
-      field.addEventListener("change", updateField);
+    document.querySelectorAll("[data-field]").forEach(field => {
+      field.addEventListener("input", updateRow);
+      field.addEventListener("change", updateRow);
     });
-    Array.from(document.querySelectorAll("[data-remove]")).forEach(function(btn){
-      btn.addEventListener("click", function(){
-        const id = Number(btn.getAttribute("data-remove"));
-        state.items = state.items.filter(function(x){ return x.id !== id; });
-        renderItems();
+    document.querySelectorAll("[data-remove]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.rows = state.rows.filter(r => r.id !== Number(btn.dataset.remove));
+        renderRows(); renderAbilities(); updateReadiness();
       });
     });
   }
 
-  function selectOption(value, current, label){
-    return '<option value="'+value+'" '+(value===current ? "selected" : "")+'>'+escapeHtml(label)+'</option>';
+  function opt(value, current, label){
+    return `<option value="${value}" ${value===current ? "selected" : ""}>${label}</option>`;
   }
 
-  function kindTitle(kind){
-    if(kind === "read") return "Readable data";
-    if(kind === "instruction") return "Saved instruction";
-    return "Action";
-  }
-
-  function updateField(event){
-    const wrapper = event.target.closest("[data-item]");
-    const id = Number(wrapper.getAttribute("data-item"));
-    const field = event.target.getAttribute("data-field");
-    const item = state.items.find(function(x){ return x.id === id; });
-    if(!item) return;
-    item[field] = event.target.value;
-    if(field === "label"){
-      item.name = opId(event.target.value);
-      if(item.kind === "read" && (!item.resourceUri || item.resourceUri.indexOf("business://") === 0)){
-        item.resourceUri = "business://" + item.name;
-      }
+  function updateRow(e){
+    const box = e.target.closest("[data-row]");
+    const row = state.rows.find(r => r.id === Number(box.dataset.row));
+    if(!row) return;
+    row[e.target.dataset.field] = e.target.value;
+    if(e.target.dataset.field === "label" && row.kind === "read" && row.source.startsWith("business://")){
+      row.source = `business://${op(row.label)}`;
+      renderRows();
     }
+    updateReadiness();
   }
 
-  function validate(){
-    const errors = [];
-    const project = slug($("projectName").value);
-    if(!project) errors.push("Add an integration name using lowercase letters, numbers, and dashes.");
-    if(state.items.length === 0) errors.push("Add at least one ability.");
+  function check(){
+    const issues = [];
+    const project = slug($("project").value);
+    if(!project) issues.push("Name the integration.");
+    if(!state.rows.length) issues.push("Choose at least one ability.");
 
     const names = new Set();
-    const uris = new Set();
-    state.items.forEach(function(item){
-      const cleanName = opId(item.label);
-      if(!cleanName) errors.push("Every ability needs a clear name.");
-      if(names.has(cleanName)) errors.push("Ability names must be unique: " + item.label);
-      names.add(cleanName);
+    const sources = new Set();
+    state.rows.forEach(row => {
+      const name = op(row.label);
+      if(!name) issues.push("Every ability needs a plain name.");
+      if(names.has(name)) issues.push(`Use unique ability names. Duplicate: ${row.label}`);
+      names.add(name);
+      if(!validEnv(row.secret)) issues.push(`Secret name is not valid for: ${row.label}`);
 
-      if(!validEnv(item.secret || "")) errors.push("Secret names must use capital letters, numbers, and underscores: " + item.label);
-
-      if(item.kind === "action" && !validUrl(item.url)){
-        errors.push("Add a real http or https action link for: " + item.label);
+      if(row.kind === "action" && !validUrl(row.link)) issues.push(`Add a real action link for: ${row.label}`);
+      if(row.kind === "read"){
+        if(!validUrl(row.link)) issues.push(`Add a real readable source link for: ${row.label}`);
+        if(!validResource(row.source)) issues.push(`Readable source name must look like business://name for: ${row.label}`);
+        if(sources.has(row.source)) issues.push(`Readable source names must be unique: ${row.source}`);
+        sources.add(row.source);
       }
-
-      if(item.kind === "read"){
-        if(!validUrl(item.url)) errors.push("Add a real http or https readable source link for: " + item.label);
-        if(!validResourceUri(item.resourceUri)) errors.push("Readable source name must look like business://name for: " + item.label);
-        if(uris.has(item.resourceUri)) errors.push("Readable source names must be unique: " + item.resourceUri);
-        uris.add(item.resourceUri);
-      }
-
-      if(item.kind === "instruction" && String(item.instruction || "").trim().length < 12){
-        errors.push("Saved instruction is too short for: " + item.label);
-      }
+      if(row.kind === "instruction" && String(row.instruction || "").trim().length < 12) issues.push(`Write a clearer saved instruction for: ${row.label}`);
     });
-
-    return {ok:errors.length===0, errors:errors, project:project};
+    return {ok:!issues.length, issues, project};
   }
 
-  function collectSecrets(){
+  function updateReadiness(){
+    const result = check();
+    const items = [];
+    items.push({ok:!!slug($("project").value), text:"Integration has a name"});
+    items.push({ok:state.rows.length>0, text:"At least one AI ability is selected"});
+    items.push({ok:state.rows.filter(r => r.kind !== "instruction").every(r => validUrl(r.link)), text:"All required app/source links are real http or https links"});
+    items.push({ok:state.rows.every(r => validEnv(r.secret)), text:"Secure secret names are valid"});
+    $("readiness").innerHTML = `<h2>Readiness check</h2>` + items.map(item => (
+      `<div class="readyitem ${item.ok ? "good" : "bad"}"><b>${item.ok ? "✓" : "!"}</b><span>${html(item.text)}</span></div>`
+    )).join("");
+  }
+
+  function secrets(){
     const set = new Set();
-    state.items.forEach(function(item){
-      if(item.secret) set.add(item.secret);
-    });
-    if($("startPaused").checked) set.add("MCP_CREATOR_ENABLED");
+    state.rows.forEach(r => { if(r.secret) set.add(r.secret); });
+    if($("paused").checked) set.add("MCP_CREATOR_ENABLED");
     return Array.from(set).sort();
   }
 
-  function buildPackage(){
-    const result = validate();
+  function normalized(){
+    return state.rows.map(r => ({
+      kind:r.kind, name:op(r.label), label:r.label.trim(), method:r.method,
+      link:r.link.trim(), secret:r.secret.trim(), source:r.source.trim(), instruction:r.instruction.trim()
+    }));
+  }
+
+  function build(){
+    const result = check();
     if(!result.ok){
-      showMessage(result.errors.join("<br>"), "err");
+      $("msg").innerHTML = `<div class="notice bad">${result.issues.map(html).join("<br>")}</div>`;
+      updateReadiness();
       return;
     }
+
     const project = result.project;
-    const requireApproval = $("askBeforeChanges").checked;
-    const actions = state.items.filter(function(x){ return x.kind === "action"; }).map(normalizeItem);
-    actions.forEach(function(action){
-      action.requiresConfirm = requireApproval && ["POST", "PUT", "PATCH", "DELETE"].includes(action.method);
-    });
-    const reads = state.items.filter(function(x){ return x.kind === "read"; }).map(normalizeItem);
-    const instructions = state.items.filter(function(x){ return x.kind === "instruction"; }).map(normalizeItem);
-    const secrets = collectSecrets();
+    const rows = normalized();
+    const actions = rows.filter(r => r.kind === "action");
+    const reads = rows.filter(r => r.kind === "read");
+    const instructions = rows.filter(r => r.kind === "instruction");
+    const secretList = secrets();
 
     const files = {
-      "Project map": projectMap(project, actions, reads, instructions, secrets),
-      "One terminal script": shellScript(project, packageJson(project), tsconfig(), indexTs(project, actions, reads, instructions, secrets), mcpJson(project, secrets), readme(project, actions, reads, instructions, secrets)),
-      "package.json": packageJson(project),
+      "Project map": projectMap(project, actions, reads, instructions, secretList),
+      "One terminal script": shell(project, pkg(project), tsconfig(), source(project, actions, reads, instructions), mcpConfig(project, secretList), readme(project, actions, reads, instructions, secretList)),
+      "package.json": pkg(project),
       "tsconfig.json": tsconfig(),
-      "src/index.ts": indexTs(project, actions, reads, instructions, secrets),
-      ".vscode/mcp.json": mcpJson(project, secrets),
-      "README.md": readme(project, actions, reads, instructions, secrets),
-      "Test checklist": testChecklist(project, actions, reads, instructions)
+      "src/index.ts": source(project, actions, reads, instructions),
+      ".vscode/mcp.json": mcpConfig(project, secretList),
+      "README.md": readme(project, actions, reads, instructions, secretList),
+      "Plain test plan": testPlan(actions, reads, instructions)
     };
-
-    renderOutput(project, actions, reads, instructions, secrets, files);
-    showMessage("Package created. Copy the terminal script first, then review the README.", "ok");
+    renderOutput(project, actions, reads, instructions, secretList, files);
+    $("msg").innerHTML = `<div class="notice good">Package created. Start with the terminal script and README.</div>`;
   }
 
-  function normalizeItem(item){
-    return {
-      name: opId(item.label),
-      label: String(item.label || "").trim(),
-      method: item.method || "GET",
-      url: String(item.url || "").trim(),
-      secret: String(item.secret || "").trim(),
-      resourceUri: String(item.resourceUri || "").trim(),
-      instruction: String(item.instruction || "").trim()
-    };
-  }
-
-  function packageJson(project){
+  function pkg(project){
     return JSON.stringify({
-      name:project,
-      version:"1.0.0",
-      type:"module",
+      name:project, version:"1.0.0", type:"module",
       scripts:{build:"tsc", start:"node build/index.js"},
-      dependencies:{"@modelcontextprotocol/sdk":"1.29.0","zod":"^3.24.1"},
+      dependencies:{"@modelcontextprotocol/sdk":"1.29.0","zod":"^3.25.0"},
       devDependencies:{"@types/node":"^22.10.0","typescript":"^5.7.0"},
       engines:{node:">=20.0.0"}
     }, null, 2);
@@ -561,159 +501,161 @@
   function tsconfig(){
     return JSON.stringify({
       compilerOptions:{
-        target:"ES2022",
-        module:"NodeNext",
-        moduleResolution:"NodeNext",
-        outDir:"build",
-        rootDir:"src",
-        strict:true,
-        esModuleInterop:true,
-        skipLibCheck:true,
-        forceConsistentCasingInFileNames:true
+        target:"ES2022", module:"NodeNext", moduleResolution:"NodeNext",
+        outDir:"build", rootDir:"src", strict:true, esModuleInterop:true,
+        skipLibCheck:true, forceConsistentCasingInFileNames:true
       },
       include:["src"]
     }, null, 2);
   }
 
-  function authHeader(secret){
-    if(!secret) return "";
-    return `
-  const token = process.env["${safeText(secret)}"];
-  if (!token) {
-    throw new Error("Missing required secret: ${safeText(secret)}");
-  }
-  headers.set("Authorization", \`Bearer \${token}\`);`;
+  function approvalRequired(action){
+    return $("approval").checked && ["POST","PUT","PATCH","DELETE"].includes(action.method);
   }
 
   function actionCode(action){
-    const isBody = ["POST","PUT","PATCH"].includes(action.method);
-    const confirmGate = action.requiresConfirm ? `
+    const bodyMethod = ["POST","PUT","PATCH"].includes(action.method);
+    const approval = approvalRequired(action) ? `
       if (input.confirm_change !== true) {
         return {
           isError: true,
-          content: [{ type: "text", text: "This action changes business data. Send confirm_change=true only after the user clearly approves this exact change." }]
+          content: [{ type: "text", text: "This action can change business data. Run again with confirm_change=true after the user approves." }]
         };
       }` : "";
+    const auth = action.secret ? `
+      const token = process.env["${code(action.secret)}"];
+      if (!token) throw new Error("Missing required secret: ${code(action.secret)}");
+      headers.set("Authorization", \`Bearer \${token}\`);` : "";
     return `
-server.tool(
-  "${safeText(action.name)}",
-  "${safeText(action.label)}${action.requiresConfirm ? " - requires explicit user approval before running" : ""}",
+server.registerTool(
+  "${code(action.name)}",
   {
-    input: z.record(z.unknown()).describe("Details for this action${action.requiresConfirm ? "; include confirm_change=true after explicit user approval" : ""}")
+    title: "${code(action.label)}",
+    description: "Approved action: ${code(action.label)}",
+    inputSchema: {
+      input: z.record(z.unknown()).describe("Information for this action")
+    }
   },
   async ({ input }) => {
     try {
-      ensureEnabled();${confirmGate}
-      let urlText = "${safeText(action.url)}";
-      const remainingInput: Record<string, unknown> = { ...input };
-      for (const [key, value] of Object.entries(input)) {
-        const token = "{" + key + "}";
-        if (urlText.includes(token)) {
-          urlText = urlText.split(token).join(encodeURIComponent(String(value)));
-          delete remainingInput[key];
+      ensureEnabled();
+      const cleanInput: Record<string, unknown> = { ...input };
+      ${approval}
+      delete cleanInput.confirm_change;
+
+      const usedPathKeys = new Set<string>();
+      const finalUrl = "${code(action.link)}".replace(/\{([^}]+)\}/g, (_match, key: string) => {
+        const value = cleanInput[key];
+        if (value === undefined || value === null || value === "") {
+          throw new Error(\`Missing value for link field: \${key}\`);
         }
+        usedPathKeys.add(key);
+        delete cleanInput[key];
+        return encodeURIComponent(String(value));
+      });
+      const url = new URL(finalUrl);
+      if (/\{[^}]+\}/.test(url.href)) {
+        throw new Error("The action link still contains an unresolved value in braces.");
       }
-      const url = new URL(urlText);
+
       const headers = new Headers();
-      headers.set("Accept", "application/json, text/plain;q=0.9, */*;q=0.8");${isBody ? '\n      headers.set("Content-Type", "application/json");' : ""}${authHeader(action.secret)}
-      ${isBody ? 'const request: RequestInit = { method: "'+action.method+'", headers, body: JSON.stringify(remainingInput) };' : 'for (const [key, value] of Object.entries(remainingInput)) {\n        if (value !== undefined && value !== null) url.searchParams.set(key, String(value));\n      }\n      const request: RequestInit = { method: "'+action.method+'", headers };'}
+      headers.set("Accept", "application/json, text/plain;q=0.9, */*;q=0.8");${bodyMethod ? '\n      headers.set("Content-Type", "application/json");' : ""}${auth}
+      ${bodyMethod ? `const request: RequestInit = { method: "${action.method}", headers, body: JSON.stringify(cleanInput) };` : `for (const [key, value] of Object.entries(cleanInput)) {
+        if (value !== undefined && value !== null) url.searchParams.set(key, String(value));
+      }
+      const request: RequestInit = { method: "${action.method}", headers };`}
       const response = await fetch(url, request);
       const text = await response.text();
       if (!response.ok) {
-        return {
-          isError: true,
-          content: [{ type: "text", text: \`Action failed with HTTP \${response.status}: \${text.slice(0, 1000)}\` }]
-        };
+        return { isError: true, content: [{ type: "text", text: \`Action failed with HTTP \${response.status}: \${text.slice(0, 1000)}\` }] };
       }
-      return toMcpResponse(text);
+      return asMcpText(text);
     } catch (error) {
-      return {
-        isError: true,
-        content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }]
-      };
+      return { isError: true, content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }] };
     }
   }
 );`;
   }
 
-  function resourceCode(resource){
+  function readCode(item){
+    const auth = item.secret ? `
+    const token = process.env["${code(item.secret)}"];
+    if (!token) throw new Error("Missing required secret: ${code(item.secret)}");
+    headers.set("Authorization", \`Bearer \${token}\`);` : "";
     return `
-server.resource(
-  "${safeText(resource.name)}",
-  "${safeText(resource.resourceUri)}",
+server.registerResource(
+  "${code(item.name)}",
+  "${code(item.source)}",
   {
-    title: "${safeText(resource.label)}",
+    title: "${code(item.label)}",
     description: "Approved readable source"
   },
   async (uri) => {
     ensureEnabled();
     const headers = new Headers();
-    headers.set("Accept", "application/json, text/plain;q=0.9, */*;q=0.8");${authHeader(resource.secret)}
-    const response = await fetch("${safeText(resource.url)}", { method: "GET", headers });
+    headers.set("Accept", "application/json, text/plain;q=0.9, */*;q=0.8");${auth}
+    const response = await fetch("${code(item.link)}", { method: "GET", headers });
     const text = await response.text();
-    if (!response.ok) {
-      throw new Error(\`Readable source failed with HTTP \${response.status}: \${text.slice(0, 1000)}\`);
-    }
-    return {
-      contents: [{ uri: uri.href, text }]
-    };
+    if (!response.ok) throw new Error(\`Readable source failed with HTTP \${response.status}: \${text.slice(0, 1000)}\`);
+    return { contents: [{ uri: uri.href, text }] };
   }
 );`;
   }
 
-  function promptCode(prompt){
+  function promptCode(item){
     return `
-server.prompt(
-  "${safeText(prompt.name)}",
-  "${safeText(prompt.label)}",
+server.registerPrompt(
+  "${code(item.name)}",
   {
-    topic: z.string().describe("What the user wants help with")
+    title: "${code(item.label)}",
+    description: "Saved instruction: ${code(item.label)}",
+    argsSchema: {
+      topic: z.string().describe("User request")
+    }
   },
   ({ topic }) => ({
     messages: [{
       role: "user",
       content: {
         type: "text",
-        text: \`${safeText(prompt.instruction)}\\n\\nUser request: \${topic}\`
+        text: \`${code(item.instruction)}\\n\\nUser request: \${topic}\`
       }
     }]
   })
 );`;
   }
 
-  function indexTs(project, actions, reads, instructions, secrets){
-    const pausedDefault = $("startPaused").checked ? "false" : "true";
+  function source(project, actions, reads, instructions){
+    const enabled = $("paused").checked ? "false" : "true";
     return `import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
 const server = new McpServer({
-  name: "${safeText(project)}",
+  name: "${code(project)}",
   version: "1.0.0"
 });
 
 function ensureEnabled(): void {
-  const enabled = process.env.MCP_CREATOR_ENABLED ?? "${pausedDefault}";
+  const enabled = process.env.MCP_CREATOR_ENABLED ?? "${enabled}";
   if (enabled !== "true") {
     throw new Error("This MCP integration is paused. Set MCP_CREATOR_ENABLED=true to enable it.");
   }
 }
 
-function toMcpResponse(text: string) {
+function asMcpText(text: string) {
   try {
-    const json = JSON.parse(text);
+    const data = JSON.parse(text);
     return {
-      content: [{ type: "text" as const, text: JSON.stringify(json, null, 2) }],
-      structuredContent: json
+      content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+      structuredContent: data
     };
   } catch {
-    return {
-      content: [{ type: "text" as const, text }]
-    };
+    return { content: [{ type: "text" as const, text }] };
   }
 }
 ${actions.map(actionCode).join("\n")}
-${reads.map(resourceCode).join("\n")}
+${reads.map(readCode).join("\n")}
 ${instructions.map(promptCode).join("\n")}
 
 const transport = new StdioServerTransport();
@@ -721,23 +663,13 @@ await server.connect(transport);
 `;
   }
 
-  function mcpJson(project, secrets){
+  function mcpConfig(project, secretList){
     const env = {};
-    secrets.forEach(function(secret){
-      env[secret] = "${env:" + secret + "}";
-    });
-    return JSON.stringify({
-      servers:{
-        [project]:{
-          command:"node",
-          args:["build/index.js"],
-          env:env
-        }
-      }
-    }, null, 2);
+    secretList.forEach(s => env[s] = "${env:" + s + "}");
+    return JSON.stringify({servers:{[project]:{command:"node",args:["build/index.js"],env}}}, null, 2);
   }
 
-  function projectMap(project, actions, reads, instructions, secrets){
+  function projectMap(project, actions, reads, instructions, secretList){
     return `${project}/
 ├─ package.json
 ├─ tsconfig.json
@@ -747,77 +679,71 @@ await server.connect(transport);
 └─ src/
    └─ index.ts
 
-Allowed AI actions:
-${actions.length ? actions.map(function(a){ return "• " + a.label + " -> " + a.method + " " + a.url; }).join("\n") : "• None"}
+AI actions:
+${actions.length ? actions.map(a => `• ${a.label} -> ${a.method} ${a.link}`).join("\n") : "• None"}
 
 Readable data:
-${reads.length ? reads.map(function(r){ return "• " + r.label + " -> " + r.url; }).join("\n") : "• None"}
+${reads.length ? reads.map(r => `• ${r.label} -> ${r.link}`).join("\n") : "• None"}
 
 Saved instructions:
-${instructions.length ? instructions.map(function(p){ return "• " + p.label; }).join("\n") : "• None"}
+${instructions.length ? instructions.map(p => `• ${p.label}`).join("\n") : "• None"}
 
-Required secrets:
-${secrets.length ? secrets.map(function(s){ return "• " + s; }).join("\n") : "• None"}`;
+Secure secret names:
+${secretList.length ? secretList.map(s => `• ${s}`).join("\n") : "• None"}`;
   }
 
-  function shellScript(project, pkg, ts, index, mcp, readmeText){
-    const secrets = collectSecrets();
-    const guards = secrets.map(function(secret){
-      return ': "${' + secret + ':?Set ' + secret + ' before running this script}"';
-    }).join("\n");
+  function shell(project, pkgText, tsText, srcText, mcpText, readmeText){
+    const secretList = secrets();
+    const files = {
+      "package.json": pkgText,
+      "tsconfig.json": tsText,
+      "README.md": readmeText,
+      ".vscode/mcp.json": mcpText,
+      "src/index.ts": srcText
+    };
+    const filesJson = JSON.stringify(files, null, 2);
+    const guards = secretList.map(s => `: "\${${s}:?Set ${s} before running this script}"`).join("\n");
     return `set -e
 
 mkdir -p ${project}/src ${project}/.vscode
 cd ${project}
 ${guards ? guards + "\n" : ""}
-cat > package.json <<'FILE'
-${pkg}
-FILE
-
-cat > tsconfig.json <<'FILE'
-${ts}
-FILE
-
-cat > README.md <<'FILE'
-${readmeText}
-FILE
-
-cat > .vscode/mcp.json <<'FILE'
-${mcp}
-FILE
-
-cat > src/index.ts <<'FILE'
-${index}
-FILE
+node <<'MCP_CREATOR_WRITE_FILES'
+const fs = require('fs');
+const path = require('path');
+const files = ${filesJson};
+for (const [filePath, content] of Object.entries(files)) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, content, 'utf8');
+}
+MCP_CREATOR_WRITE_FILES
 
 npm install
 npm run build
 
-echo "MCP package created. Start it with: npm start"
+echo "Package ready. Start it with: npm start"
 `;
   }
 
-  function readme(project, actions, reads, instructions, secrets){
+  function readme(project, actions, reads, instructions, secretList){
     return `# ${project}
 
-This MCP package was generated by MCP Creator Local.
+This package was created with MCP Creator Simple.
 
-## What this integration allows
+## What the AI is allowed to do
 
 ### Actions
-${actions.length ? actions.map(function(a){ return "- " + a.label + " using " + a.method + " " + a.url; }).join("\n") : "- No external actions"}
+${actions.length ? actions.map(a => `- ${a.label}: ${a.method} ${a.link}${approvalRequired(a) ? " - requires approval" : ""}`).join("\n") : "- No actions"}
 
 ### Readable data
-${reads.length ? reads.map(function(r){ return "- " + r.label + " from " + r.url; }).join("\n") : "- No readable sources"}
+${reads.length ? reads.map(r => `- ${r.label}: ${r.link}`).join("\n") : "- No readable data"}
 
 ### Saved instructions
-${instructions.length ? instructions.map(function(p){ return "- " + p.label; }).join("\n") : "- No saved instructions"}
+${instructions.length ? instructions.map(p => `- ${p.label}`).join("\n") : "- No saved instructions"}
 
-## Required secrets
+## Secure secret names
 
-${secrets.length ? secrets.map(function(s){ return "- " + s; }).join("\n") : "No secrets are required."}
-
-Set each secret in your terminal or hosting environment before running the server.
+${secretList.length ? secretList.map(s => `- ${s}`).join("\n") : "No secrets are required."}
 
 ## Run
 
@@ -829,163 +755,92 @@ npm start
 
 ## Pause or enable
 
-Set this value before starting the server:
-
 \`\`\`bash
 export MCP_CREATOR_ENABLED=true
 \`\`\`
 
-Set it to false to pause the integration.
+Use false to pause it.
 
-## Safety note
+## Plain test
 
-Review every action link and permission before connecting this MCP to an AI client. When approval protection is enabled, changing actions require confirm_change=true. Use that only after the user clearly approves the exact change.
+Start with a harmless read request. For actions that change data, test with non-critical data first.
 `;
   }
 
-  function testChecklist(project, actions, reads, instructions){
-    const lines = [];
-    lines.push("Test this MCP after installation:");
-    lines.push("");
-    lines.push("1. Start the MCP server with npm start.");
-    lines.push("2. Add the .vscode/mcp.json content to your MCP-capable client when needed.");
-    lines.push("3. Ask your AI client one safe question first.");
-    if(reads.length){
-      lines.push("");
-      lines.push("Readable data tests:");
-      reads.forEach(function(r){
-        lines.push("- Ask: Read " + r.label + " and summarize it in 5 bullet points.");
-      });
-    }
-    if(actions.length){
-      lines.push("");
-      lines.push("Action tests:");
-      actions.forEach(function(a){
-        lines.push("- Ask: Use " + a.label + " with a harmless test input.");
-      });
-    }
-    if(instructions.length){
-      lines.push("");
-      lines.push("Saved instruction tests:");
-      instructions.forEach(function(p){
-        lines.push("- Ask: Use " + p.label + " for a simple request.");
-      });
-    }
-    lines.push("");
-    lines.push("Expected result: the AI either returns real data from the connected source or shows a clear error from the real app connection.");
-    return lines.join("\n");
+  function testPlan(actions, reads, instructions){
+    const out = ["Plain test plan", "", "1. Run the package.", "2. Connect it to your MCP-capable AI app.", "3. Try one safe request first."];
+    if(reads.length){ out.push("", "Readable data tests:"); reads.forEach(r => out.push(`- Ask: Read ${r.label} and summarize it.`)); }
+    if(instructions.length){ out.push("", "Saved instruction tests:"); instructions.forEach(p => out.push(`- Ask: Use ${p.label} for a short answer.`)); }
+    if(actions.length){ out.push("", "Action tests:"); actions.forEach(a => out.push(`- Ask: Use ${a.label} with harmless test information.`)); }
+    out.push("", "Good result: the AI returns real data from your link or shows a clear connection error.");
+    return out.join("\n");
   }
 
-  function renderOutput(project, actions, reads, instructions, secrets, files){
-    const fileNames = Object.keys(files);
-    $("outputArea").className = "";
-    $("outputArea").innerHTML =
-      '<div class="summary">' +
-        '<div><b>Integration</b><span>'+escapeHtml(project)+'</span></div>' +
-        '<div><b>Abilities</b><span>'+escapeHtml(String(actions.length + reads.length + instructions.length))+'</span></div>' +
-        '<div><b>Secrets</b><span>'+escapeHtml(secrets.length ? secrets.join(", ") : "None")+'</span></div>' +
-      '</div>' +
-      '<div class="notice ok">This package uses only the real links and secret names you entered. It does not include hidden sample services or silent fallbacks.</div>' +
-      '<div class="tabs">'+fileNames.map(function(name, idx){
-        return '<button class="tab" data-tab="'+escapeHtml(name)+'" aria-selected="'+(idx===0)+'">'+escapeHtml(name)+'</button>';
-      }).join("")+'</div>' +
-      '<div id="fileBlocks">'+fileNames.map(function(name, idx){
-        return block(name, files[name], idx===0);
-      }).join("")+'</div>';
-
-    Array.from(document.querySelectorAll("[data-tab]")).forEach(function(btn){
-      btn.addEventListener("click", function(){
-        const name = btn.getAttribute("data-tab");
-        Array.from(document.querySelectorAll("[data-tab]")).forEach(function(x){ x.setAttribute("aria-selected", String(x === btn)); });
-        Array.from(document.querySelectorAll("[data-file]")).forEach(function(x){ x.style.display = x.getAttribute("data-file") === name ? "block" : "none"; });
+  function renderOutput(project, actions, reads, instructions, secretList, files){
+    const names = Object.keys(files);
+    $("output").className = "";
+    $("output").innerHTML = `
+      <div class="summary">
+        <div><b>Integration</b><span>${html(project)}</span></div>
+        <div><b>Abilities</b><span>${actions.length + reads.length + instructions.length}</span></div>
+        <div><b>Secrets</b><span>${secretList.length ? html(secretList.join(", ")) : "None"}</span></div>
+      </div>
+      <div class="notice good">Export uses only your real entries. No hidden sample service is included.</div>
+      <div class="tabs">${names.map((n,i)=>`<button class="tab" data-tab="${html(n)}" aria-selected="${i===0}">${html(n)}</button>`).join("")}</div>
+      <div>${names.map((n,i)=>block(n,files[n],i===0)).join("")}</div>`;
+    document.querySelectorAll("[data-tab]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const name = btn.dataset.tab;
+        document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", String(b === btn)));
+        document.querySelectorAll("[data-file]").forEach(f => f.style.display = f.dataset.file === name ? "block" : "none");
       });
     });
-    Array.from(document.querySelectorAll("[data-copy]")).forEach(function(btn){
-      btn.addEventListener("click", function(){
-        copy(btn.getAttribute("data-copy"));
-      });
-    });
-    Array.from(document.querySelectorAll("[data-download]")).forEach(function(btn){
-      btn.addEventListener("click", function(){
-        downloadFile(btn.getAttribute("data-download"), files[btn.getAttribute("data-download")]);
-      });
-    });
+    document.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => copyText($(btn.dataset.copy).innerText)));
+    document.querySelectorAll("[data-download]").forEach(btn => btn.addEventListener("click", () => download(btn.dataset.download, files[btn.dataset.download])));
   }
 
-  function block(name, text, shown){
-    const id = "block_" + name.replace(/[^a-z0-9]/gi,"_");
-    return '<div class="block" data-file="'+escapeHtml(name)+'" style="display:'+(shown ? "block" : "none")+'">' +
-      '<div class="blockhead"><span>'+escapeHtml(name)+'</span><div><button class="mini" data-copy="'+id+'">Copy</button> <button class="mini" data-download="'+escapeHtml(name)+'">Download</button></div></div>' +
-      '<pre id="'+id+'">'+escapeHtml(text)+'</pre></div>';
+  function block(name, text, show){
+    const id = "file_" + name.replace(/[^a-z0-9]/gi,"_");
+    return `<div class="block" data-file="${html(name)}" style="display:${show ? "block" : "none"}">
+      <div class="blockhead"><span>${html(name)}</span><div><button class="mini" data-copy="${id}">Copy</button> <button class="mini" data-download="${html(name)}">Download</button></div></div>
+      <pre id="${id}">${html(text)}</pre>
+    </div>`;
   }
 
-  function copy(id){
-    const text = $(id).innerText;
+  function copyText(text){
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).catch(function(){ fallbackCopy(text); });
-    }else{
-      fallbackCopy(text);
-    }
+      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+    }else{ fallbackCopy(text); }
   }
 
   function fallbackCopy(text){
     const area = document.createElement("textarea");
-    area.value = text;
-    area.setAttribute("readonly", "readonly");
-    area.style.position = "fixed";
-    area.style.left = "-9999px";
-    document.body.appendChild(area);
-    area.select();
-    document.execCommand("copy");
-    document.body.removeChild(area);
+    area.value = text; area.setAttribute("readonly","readonly");
+    area.style.position = "fixed"; area.style.left = "-9999px";
+    document.body.appendChild(area); area.select(); document.execCommand("copy"); area.remove();
   }
 
-  function downloadFile(name, text){
-    const safe = name.replace(/\//g,"_").replace(/^\./,"dot-");
+  function download(name, text){
+    const fileName = name.replace(/\//g,"_").replace(/^\./,"dot-");
     const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = safe;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
-  function showMessage(text, type){
-    $("message").innerHTML = '<div class="notice '+type+'">'+text+'</div>';
-  }
+  $("addCustomAction").addEventListener("click", () => { state.rows.push(makeRow("action","New action","POST")); renderRows(); renderAbilities(); updateReadiness(); });
+  $("addCustomRead").addEventListener("click", () => { state.rows.push(makeRow("read","New readable source","GET")); renderRows(); renderAbilities(); updateReadiness(); });
+  $("addCustomInstruction").addEventListener("click", () => { state.rows.push(makeRow("instruction","New saved instruction","GET")); renderRows(); renderAbilities(); updateReadiness(); });
+  $("build").addEventListener("click", build);
+  $("reset").addEventListener("click", () => {
+    $("project").value = ""; $("approval").checked = true; $("paused").checked = false;
+    state.template = "custom"; state.rows = []; state.counter = 1; $("msg").innerHTML = "";
+    $("output").className = "empty"; $("output").textContent = "Complete the steps above. When everything is ready, your package files will appear here.";
+    renderTemplates(); renderAbilities(); renderRows(); updateReadiness();
+  });
+  $("project").addEventListener("input", updateReadiness);
 
-  $("addAction").addEventListener("click", function(){
-    state.items.push(makeItem("New action", "action"));
-    renderItems();
-  });
-  $("addReadable").addEventListener("click", function(){
-    state.items.push(makeItem("New readable source", "read"));
-    renderItems();
-  });
-  $("addInstruction").addEventListener("click", function(){
-    state.items.push(makeItem("New saved instruction", "instruction"));
-    renderItems();
-  });
-  $("generate").addEventListener("click", buildPackage);
-  $("clearAll").addEventListener("click", function(){
-    $("projectName").value = "";
-    state.items = [];
-    state.itemCounter = 1;
-    state.template = "custom";
-    $("message").innerHTML = "";
-    $("outputArea").className = "empty";
-    $("outputArea").textContent = "Complete the steps on the left, then create your MCP package.";
-    renderTemplates();
-    renderPermissions(templates[0].permissions);
-    renderItems();
-  });
-
-  renderTemplates();
-  renderPermissions(templates[0].permissions);
-  renderItems();
+  renderTemplates(); renderAbilities(); renderRows(); updateReadiness();
 })();
 </script>
 </body>
