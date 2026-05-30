@@ -3,437 +3,741 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MCP Creator</title>
+  <title>MCP Creator Local</title>
   <style>
     :root{
-      --paper:#f6f1e7;--ink:#191714;--soft:#fffaf1;--line:#2b2721;--muted:#6c6255;
-      --accent:#186d65;--accent2:#c35a26;--bad:#b42318;--good:#0b6b3a;--chip:#e8dfcf;
-      --shadow:8px 8px 0 #191714;
+      --bg:#f7f3ea;
+      --ink:#15120d;
+      --muted:#675f52;
+      --line:#201a12;
+      --soft:#eee6d8;
+      --paper:#fffaf1;
+      --accent:#0e7c6b;
+      --accent2:#c56a2d;
+      --danger:#a63d2d;
+      --ok:#1d7d45;
+      --code:#101214;
+      --codetext:#eaf1ea;
     }
     *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(90deg,rgba(25,23,20,.035) 1px,transparent 1px),linear-gradient(rgba(25,23,20,.035) 1px,transparent 1px),var(--paper);background-size:26px 26px;color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
-    header{max-width:1180px;margin:0 auto;padding:28px 18px 14px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:2px solid var(--line);background:var(--soft);padding:16px;box-shadow:var(--shadow)}
-    h1{margin:0;font-size:clamp(30px,5vw,56px);letter-spacing:-.05em;line-height:.95}
-    .mark{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;color:var(--accent);font-size:13px;border:2px solid var(--line);padding:7px 9px;background:#e9f3ef}
-    .intro{max-width:920px;margin:18px 0 0;font-size:16px;line-height:1.55;color:#332f29}
-    .wrap{max-width:1180px;margin:0 auto;padding:18px;display:grid;grid-template-columns:430px 1fr;gap:18px}
-    @media(max-width:960px){.wrap{grid-template-columns:1fr}.topbar{box-shadow:5px 5px 0 #191714}}
-    .panel{border:2px solid var(--line);background:var(--soft);box-shadow:var(--shadow)}
-    .panel h2{margin:0;padding:13px 15px;border-bottom:2px solid var(--line);font-size:14px;letter-spacing:.08em;text-transform:uppercase;background:#f0e5d2;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-    .body{padding:15px}
-    label{display:block;font-weight:800;font-size:13px;margin:14px 0 6px}
-    .help{font-size:12px;line-height:1.45;color:var(--muted);margin:5px 0 8px}
-    input,textarea,select{width:100%;border:2px solid var(--line);background:#fffdfa;color:var(--ink);border-radius:0;padding:10px 11px;font:inherit;font-size:14px;outline:none}
-    textarea{min-height:78px;resize:vertical;line-height:1.45}
-    input:focus,textarea:focus,select:focus{box-shadow:0 0 0 3px rgba(24,109,101,.18)}
-    .row{border:2px solid var(--line);background:#fffdfa;padding:12px;margin:12px 0;position:relative}
-    .rowtitle{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:900;font-size:12px;letter-spacing:.06em;color:var(--accent);margin-bottom:7px;text-transform:uppercase}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-    .grid3{display:grid;grid-template-columns:1fr 110px 1fr;gap:9px}
-    @media(max-width:620px){.grid2,.grid3{grid-template-columns:1fr}}
-    .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
-    button{border:2px solid var(--line);background:var(--ink);color:#fffaf1;padding:10px 12px;font-weight:900;cursor:pointer;font:inherit;font-size:13px;box-shadow:3px 3px 0 var(--line)}
-    button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--line)}
-    button.secondary{background:#fffdfa;color:var(--ink)}
-    button.warn{background:#fff0eb;color:#6e210f}
-    .mini{padding:6px 8px;font-size:12px;box-shadow:2px 2px 0 var(--line)}
-    .status{border:2px solid var(--line);background:#fffdfa;padding:12px;font-size:13px;line-height:1.5;margin-bottom:12px}
-    .status.good{border-color:var(--good);background:#eef8f1;color:#12492c}
-    .status.bad{border-color:var(--bad);background:#fff0ef;color:#731d16}
-    .outgrid{display:grid;gap:13px}
-    .block{border:2px solid var(--line);background:#151412;color:#fffaf1;overflow:hidden}
-    .blockhead{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:2px solid #fffaf1;padding:10px 12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-    .copy{background:#fffaf1;color:#151412;border-color:#fffaf1;box-shadow:none}
-    pre{margin:0;padding:13px;overflow:auto;font-size:12px;line-height:1.45;white-space:pre;color:#fffaf1}
-    .manual{max-width:1180px;margin:0 auto 34px;padding:0 18px}
-    details{border:2px solid var(--line);background:var(--soft);box-shadow:var(--shadow)}
-    summary{cursor:pointer;padding:14px 15px;font-weight:900;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.06em;background:#f0e5d2}
-    .manual .content{padding:15px;border-top:2px solid var(--line);line-height:1.55;color:#332f29}
-    .manual ol{padding-left:21px}.manual li{margin:7px 0}
-    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#eee2ce;padding:2px 5px;border:1px solid #d2c2aa}
-    .dangerline{font-size:12px;line-height:1.45;color:#6e210f;background:#fff0eb;border-left:5px solid var(--accent2);padding:9px 11px;margin-top:10px}
+    html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+    body{
+      background-image:
+        linear-gradient(rgba(21,18,13,.045) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(21,18,13,.045) 1px,transparent 1px);
+      background-size:26px 26px;
+    }
+    .shell{max-width:1180px;margin:0 auto;padding:22px}
+    .top{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      align-items:stretch;
+      margin-bottom:18px;
+    }
+    @media(max-width:860px){.top{grid-template-columns:1fr}.shell{padding:14px}}
+    .hero,.manual,.panel,.output{
+      background:var(--paper);
+      border:2px solid var(--line);
+      box-shadow:8px 8px 0 var(--line);
+    }
+    .hero{padding:26px}
+    .eyebrow{font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+    h1{margin:10px 0 10px;font-size:clamp(34px,6vw,72px);line-height:.92;letter-spacing:-.06em}
+    .hero p{margin:0;color:var(--muted);font-size:17px;line-height:1.55;max-width:760px}
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
+    @media(max-width:740px){.steps{grid-template-columns:1fr 1fr}}
+    .step{border:1.6px solid var(--line);background:var(--soft);padding:11px;min-height:86px}
+    .step b{display:block;font-size:13px;margin-bottom:5px}
+    .step span{display:block;font-size:12px;color:var(--muted);line-height:1.35}
+    .manual{padding:18px}
+    .manual h2,.panel h2,.output h2{margin:0;font-size:18px;letter-spacing:-.02em}
+    .manual p,.manual li{color:var(--muted);font-size:14px;line-height:1.55}
+    .manual ol{margin:12px 0 0;padding-left:21px}
+    .grid{display:grid;grid-template-columns:420px 1fr;gap:18px}
+    @media(max-width:960px){.grid{grid-template-columns:1fr}}
+    .panel,.output{padding:18px}
+    .section{border-top:2px solid var(--line);padding-top:15px;margin-top:16px}
+    label{display:block;font-size:13px;font-weight:800;margin:12px 0 6px}
+    .hint{font-size:12.5px;color:var(--muted);line-height:1.45;margin:6px 0 0}
+    input,textarea,select{
+      width:100%;
+      background:#fffdf7;
+      border:2px solid var(--line);
+      color:var(--ink);
+      border-radius:0;
+      padding:11px;
+      font:inherit;
+      outline:none;
+    }
+    textarea{min-height:86px;resize:vertical;line-height:1.45}
+    input:focus,textarea:focus,select:focus{outline:3px solid rgba(14,124,107,.18)}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:540px){.row2{grid-template-columns:1fr}}
+    button{
+      appearance:none;
+      border:2px solid var(--line);
+      background:var(--ink);
+      color:#fffaf1;
+      padding:11px 13px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:4px 4px 0 var(--line);
+    }
+    button.secondary{background:var(--paper);color:var(--ink)}
+    button.soft{background:var(--soft);color:var(--ink)}
+    button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line)}
+    .btnbar{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+    .abilityBtn{width:100%;text-align:left;margin-top:8px;box-shadow:3px 3px 0 var(--line)}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+    @media(max-width:560px){.cards{grid-template-columns:1fr}}
+    .template{
+      border:2px solid var(--line);
+      background:var(--soft);
+      padding:12px;
+      cursor:pointer;
+      min-height:102px;
+    }
+    .template[aria-selected="true"]{background:#d9efe9;outline:4px solid rgba(14,124,107,.24)}
+    .template strong{display:block;margin-bottom:5px}
+    .template small{display:block;color:var(--muted);line-height:1.35}
+    .checks{display:grid;gap:7px;margin-top:8px}
+    .checkline{display:flex;gap:8px;align-items:flex-start;border:1.5px solid var(--line);background:#fffdf7;padding:9px}
+    .checkline input{width:auto;margin-top:3px}
+    .item{border:2px solid var(--line);background:#fffdf7;padding:12px;margin-top:10px}
+    .itemhead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
+    .itemhead strong{font-size:14px}
+    .remove{padding:7px 9px;background:#fff3ef;color:var(--danger);box-shadow:none}
+    .notice{border:2px solid var(--line);padding:12px;background:#fff2d2;color:#3e2a06;margin-top:12px;font-size:13px;line-height:1.5}
+    .notice.ok{background:#ddf5e5;color:#103d24}
+    .notice.err{background:#ffe0db;color:#5a160e}
+    .tabs{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}
+    .tab{background:var(--paper);color:var(--ink);box-shadow:none;padding:8px 10px}
+    .tab[aria-selected="true"]{background:var(--accent);color:white}
+    .block{border:2px solid var(--line);background:var(--code);color:var(--codetext);margin-top:12px}
+    .blockhead{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:2px solid #313536;padding:9px 10px;background:#181b1d}
+    .blockhead span{font:800 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.04em}
+    .mini{box-shadow:none;padding:6px 8px;background:#f5efe5;color:var(--ink)}
+    pre{margin:0;padding:13px;overflow:auto;font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0}
+    @media(max-width:680px){.summary{grid-template-columns:1fr}}
+    .summary div{border:2px solid var(--line);background:var(--soft);padding:10px}
+    .summary b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+    .summary span{font-size:13px;color:var(--muted)}
+    .empty{padding:18px;border:2px dashed var(--line);background:var(--soft);color:var(--muted);line-height:1.55}
+    .footer{font-size:12px;color:var(--muted);margin-top:18px;line-height:1.5}
   </style>
 </head>
 <body>
-<header>
-  <div class="topbar">
-    <div>
-      <h1>MCP Creator</h1>
-      <p class="intro">Create a real API-backed MCP server scaffold. Each generated action must call a real URL you provide. The generated server returns the real service response or a clear service error.</p>
-    </div>
-    <div class="mark">REAL URLS REQUIRED</div>
-  </div>
-</header>
-<main class="wrap">
-  <section class="panel">
-    <h2>01 / Define your MCP</h2>
-    <div class="body">
-      <label for="projectName">MCP name</label>
-      <input id="projectName" value="" autocomplete="off">
-      <p class="help">Use a short name such as <code>mcp-creator</code>, <code>store-ops-mcp</code>, or your own app name.</p>
-
-      <label>Actions the AI can perform</label>
-      <p class="help">Each action must call a real HTTP API. No action is generated without a real URL.</p>
-      <div id="toolRows"></div>
-      <div class="actions"><button class="secondary" id="addTool">Add real action</button></div>
-
-      <label>Data the AI can read</label>
-      <p class="help">Each readable item must fetch from a real HTTP URL.</p>
-      <div id="resourceRows"></div>
-      <div class="actions"><button class="secondary" id="addResource">Add readable data</button></div>
-
-      <label>Reusable instructions</label>
-      <p class="help">Prompts are valid MCP capabilities. They do not call an API because they are saved instruction templates.</p>
-      <div id="promptRows"></div>
-      <div class="actions"><button class="secondary" id="addPrompt">Add instruction</button></div>
-
-      <label for="envVars">Secret key names</label>
-      <textarea id="envVars"></textarea>
-      <p class="help">One per line. Use names like <code>SHOP_API_KEY</code>. The generated code reads them from your environment.</p>
-
-      <div class="dangerline">Market-ready rule: actions and readable data must include real URLs, or they are rejected.</div>
-      <div class="actions">
-        <button id="build">Create MCP files</button>
-        <button class="secondary" id="clearAll">Clear</button>
+  <div class="shell">
+    <section class="top">
+      <div class="hero">
+        <div class="eyebrow">MCP Creator Local</div>
+        <h1>Create AI integrations without starting from code.</h1>
+        <p>Choose what the AI should be allowed to do, add real app connection links, then export a clean MCP package. This local version exports real MCP package files and clearly marks hosted-platform features that require a backend.</p>
+        <div class="steps" aria-label="Four step flow">
+          <div class="step"><b>1. Choose</b><span>Pick a business tool or start custom.</span></div>
+          <div class="step"><b>2. Allow</b><span>Select what the AI may read or do.</span></div>
+          <div class="step"><b>3. Connect</b><span>Add real app links or secure connection details.</span></div>
+          <div class="step"><b>4. Export</b><span>Copy files, run the script, then test in your AI client.</span></div>
+        </div>
       </div>
-    </div>
-  </section>
+      <aside class="manual">
+        <h2>Simple step-by-step guide</h2>
+        <ol>
+          <li>Give your integration a short name, such as <b>sales-assistant</b>.</li>
+          <li>Pick a template if it matches your business tool.</li>
+          <li>Write abilities in normal words: “Add a lead”, “Search invoices”, “Read product list”.</li>
+          <li>For each ability, paste the real app link the MCP should use.</li>
+          <li>Generate the package. If something is missing, the app explains it before creating files.</li>
+        </ol>
+        <p><b>Important:</b> real one-click app login, live chat testing, auto-repair, and cloud deployment require a hosted backend. This Lite file produces the real MCP package only when real connection details are entered.</p>
+      </aside>
+    </section>
 
-  <section class="panel">
-    <h2>02 / Generated package</h2>
-    <div class="body">
-      <div id="status" class="status">Add at least one real action, readable data source, or reusable instruction. Then create the MCP files.</div>
-      <div id="outputs" class="outgrid"></div>
+    <section class="grid">
+      <div class="panel">
+        <h2>Build your integration</h2>
+
+        <label for="projectName">Integration name</label>
+        <input id="projectName" value="" autocomplete="off">
+        <p class="hint">Use lowercase letters, numbers, and dashes. Example: sales-assistant</p>
+
+        <div class="section">
+          <h2>Choose a starting point</h2>
+          <div class="cards" id="templateCards"></div>
+          <p class="hint">Templates prepare useful wording only. They do not log in to external apps.</p>
+        </div>
+
+        <div class="section">
+          <h2>What should the AI be allowed to do?</h2>
+          <div id="permissions" class="checks"></div>
+          <div class="btnbar">
+            <button class="secondary" id="addAction">Add action</button>
+            <button class="secondary" id="addReadable">Add readable data</button>
+            <button class="secondary" id="addInstruction">Add saved instruction</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Real connection details</h2>
+          <p class="hint">Each action needs a real app link. Public reading can use a normal web link. Private app actions usually need a secure secret name from your hosting environment.</p>
+          <div id="items"></div>
+        </div>
+
+        <div class="section">
+          <h2>Safety controls</h2>
+          <label class="checkline">
+            <input id="askBeforeChanges" type="checkbox" checked>
+            <span><b>Ask before changing business data</b><br><small>Recommended for create, edit, and delete actions.</small></span>
+          </label>
+          <label class="checkline">
+            <input id="startPaused" type="checkbox">
+            <span><b>Export integration as paused</b><br><small>The generated server refuses requests until enabled.</small></span>
+          </label>
+        </div>
+
+        <div class="btnbar">
+          <button id="generate">Create MCP package</button>
+          <button class="secondary" id="clearAll">Clear</button>
+        </div>
+        <div id="message" aria-live="polite"></div>
+      </div>
+
+      <div class="output">
+        <h2>Package output</h2>
+        <div id="outputArea" class="empty">Complete the steps on the left, then create your MCP package.</div>
+      </div>
+    </section>
+
+    <div class="footer">
+      MCP Creator Local is a local package generator. It does not store data, send data to a server, or claim live app login/deployment features that are not present in this file.
     </div>
-  </section>
-</main>
-<section class="manual">
-  <details open>
-    <summary>How normal people use this</summary>
-    <div class="content">
-      <ol>
-        <li>Give your MCP a name.</li>
-        <li>Add an action when the AI should do something through a real API, such as creating a ticket, searching products, or sending data to your backend.</li>
-        <li>Add readable data when the AI should fetch information from a real URL.</li>
-        <li>Add reusable instructions when you want saved prompt templates inside the MCP client.</li>
-        <li>Press <strong>Create MCP files</strong>.</li>
-        <li>Copy the terminal script. It writes the project files, installs dependencies, and builds the MCP server.</li>
-        <li>Add your real secret keys in the terminal before running the MCP server.</li>
-      </ol>
-      <p>For GET actions, values are added as query parameters and can also replace URL parts such as <code>{query}</code>. For POST, PUT, and PATCH actions, the values are sent as JSON.</p>
-    </div>
-  </details>
-</section>
+  </div>
+
 <script>
-(() => {
+(function(){
   "use strict";
-  const $ = (id) => document.getElementById(id);
-  const state = { toolId: 0, resourceId: 0, promptId: 0 };
 
-  function cleanName(value, fallback) {
-    const result = String(value || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-    return result || fallback;
+  const templates = [
+    {
+      id:"custom",
+      title:"Custom business app",
+      desc:"Use this when your tool is not listed.",
+      permissions:["Read information","Create new records","Update existing records"]
+    },
+    {
+      id:"sheets",
+      title:"Google Sheets style tracker",
+      desc:"Leads, inventory, orders, budgets, or simple tables.",
+      permissions:["Read rows","Add a new row","Update a row"]
+    },
+    {
+      id:"email",
+      title:"Email assistant",
+      desc:"Search messages, prepare replies, summarize conversations.",
+      permissions:["Search messages","Draft a reply","Summarize a thread"]
+    },
+    {
+      id:"crm",
+      title:"CRM / sales pipeline",
+      desc:"Leads, contacts, follow-ups, and deal status.",
+      permissions:["Find a customer","Add a lead","Update deal status"]
+    },
+    {
+      id:"store",
+      title:"Online store helper",
+      desc:"Products, descriptions, stock, and order checks.",
+      permissions:["Read products","Update a product","Check stock"]
+    },
+    {
+      id:"knowledge",
+      title:"Company knowledge search",
+      desc:"Read public pages or approved internal knowledge links.",
+      permissions:["Read approved pages","Summarize content","Answer from source text"]
+    }
+  ];
+
+  const state = {
+    template:"custom",
+    items:[],
+    itemCounter:1
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  function slug(value){
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g,"-")
+      .replace(/^-+|-+$/g,"");
   }
-  function operationName(value) {
-    return cleanName(value, "operation").replace(/-/g, "_");
+
+  function opId(value){
+    return slug(value).replace(/-/g,"_");
   }
-  function safeText(value) {
-    return String(value || "").replace(/[&<>"']/g, (ch) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#39;" }[ch]));
+
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g, function(char){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char];
+    });
   }
-  function unique(items) {
-    return Array.from(new Set(items));
+
+  function safeText(value){
+    return String(value || "").replace(/`/g,"\\`").replace(/\$\{/g,"\\${");
   }
-  function validUrl(value) {
-    try {
+
+  function validUrl(value){
+    try{
       const u = new URL(value);
       return u.protocol === "http:" || u.protocol === "https:";
-    } catch { return false; }
+    }catch(e){
+      return false;
+    }
   }
-  function validResourceUri(value) {
-    try { new URL(value); return true; } catch { return false; }
+
+  function validResourceUri(value){
+    return /^[a-z][a-z0-9+.-]*:\/\/[^\s]+$/i.test(String(value || ""));
   }
-  function validEnv(value) {
-    return /^[A-Z_][A-Z0-9_]*$/.test(value);
+
+  function validEnv(value){
+    return value === "" || /^[A-Z][A-Z0-9_]*$/.test(value);
   }
-  function validOp(value) {
-    return /^[a-z][a-z0-9_]*$/.test(value);
-  }
-  function shellSafeHeredoc(label, content) {
-    let tag = label.toUpperCase().replace(/[^A-Z0-9]/g, "_") + "_EOF";
-    while (content.includes(tag)) tag += "_X";
-    return tag;
-  }
-  function addToolRow(data = {}) {
-    state.toolId += 1;
-    const id = state.toolId;
-    const row = document.createElement("div");
-    row.className = "row";
-    row.dataset.kind = "tool";
-    row.innerHTML = `
-      <div class="rowtitle">Real action ${id}</div>
-      <label>Action name</label><input data-field="title" value="${safeText(data.title || "")}">
-      <label>What this action really does</label><textarea data-field="description">${safeText(data.description || "")}</textarea>
-      <div class="grid3">
-        <div><label>Operation ID</label><input data-field="name" value="${safeText(data.name || "")}"></div>
-        <div><label>Method</label><select data-field="method"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select></div>
-        <div><label>Secret key name</label><input data-field="authEnv" value="${safeText(data.authEnv || "")}"></div>
-      </div>
-      <label>Real API URL</label><input data-field="url" value="${safeText(data.url || "")}">
-      <label>Input names</label><input data-field="inputs" value="${safeText(data.inputs || "query")}">
-      <p class="help">Comma-separated. These become MCP input fields. URL parts like {query} are replaced with values.</p>
-      <div class="actions"><button class="mini warn" data-remove="1">Remove action</button></div>`;
-    row.querySelector('[data-field="method"]').value = data.method || "GET";
-    row.querySelector('[data-remove]').addEventListener("click", () => row.remove());
-    row.querySelector('[data-field="title"]').addEventListener("input", (ev) => {
-      const op = row.querySelector('[data-field="name"]');
-      if (!op.dataset.touched) op.value = operationName(ev.target.value);
-    });
-    row.querySelector('[data-field="name"]').addEventListener("input", (ev) => { ev.target.dataset.touched = "1"; });
-    $("toolRows").appendChild(row);
-  }
-  function addResourceRow(data = {}) {
-    state.resourceId += 1;
-    const id = state.resourceId;
-    const row = document.createElement("div");
-    row.className = "row";
-    row.dataset.kind = "resource";
-    row.innerHTML = `
-      <div class="rowtitle">Readable data ${id}</div>
-      <label>Label</label><input data-field="title" value="${safeText(data.title || "")}">
-      <label>MCP URI</label><input data-field="uri" value="${safeText(data.uri || "")}">
-      <label>Real data URL</label><input data-field="url" value="${safeText(data.url || "")}">
-      <label>Secret key name</label><input data-field="authEnv" value="${safeText(data.authEnv || "")}">
-      <div class="actions"><button class="mini warn" data-remove="1">Remove data</button></div>`;
-    row.querySelector('[data-remove]').addEventListener("click", () => row.remove());
-    $("resourceRows").appendChild(row);
-  }
-  function addPromptRow(data = {}) {
-    state.promptId += 1;
-    const id = state.promptId;
-    const row = document.createElement("div");
-    row.className = "row";
-    row.dataset.kind = "prompt";
-    row.innerHTML = `
-      <div class="rowtitle">Reusable instruction ${id}</div>
-      <label>Instruction name</label><input data-field="title" value="${safeText(data.title || "")}">
-      <label>Operation ID</label><input data-field="name" value="${safeText(data.name || "")}">
-      <label>Instruction text</label><textarea data-field="text">${safeText(data.text || "")}</textarea>
-      <div class="actions"><button class="mini warn" data-remove="1">Remove instruction</button></div>`;
-    row.querySelector('[data-remove]').addEventListener("click", () => row.remove());
-    row.querySelector('[data-field="title"]').addEventListener("input", (ev) => {
-      const op = row.querySelector('[data-field="name"]');
-      if (!op.dataset.touched) op.value = operationName(ev.target.value);
-    });
-    row.querySelector('[data-field="name"]').addEventListener("input", (ev) => { ev.target.dataset.touched = "1"; });
-    $("promptRows").appendChild(row);
-  }
-  function readRows(kind) {
-    return Array.from(document.querySelectorAll(`[data-kind="${kind}"]`)).map((row) => {
-      const out = {};
-      row.querySelectorAll("[data-field]").forEach((el) => out[el.dataset.field] = String(el.value || "").trim());
-      return out;
+
+  function renderTemplates(){
+    $("templateCards").innerHTML = templates.map(function(t){
+      return '<div class="template" role="button" tabindex="0" data-id="'+escapeHtml(t.id)+'" aria-selected="'+(state.template===t.id)+'">' +
+        '<strong>'+escapeHtml(t.title)+'</strong><small>'+escapeHtml(t.desc)+'</small></div>';
+    }).join("");
+    Array.from(document.querySelectorAll(".template")).forEach(function(card){
+      card.addEventListener("click", function(){ chooseTemplate(card.getAttribute("data-id")); });
+      card.addEventListener("keydown", function(event){
+        if(event.key === "Enter" || event.key === " "){
+          event.preventDefault();
+          chooseTemplate(card.getAttribute("data-id"));
+        }
+      });
     });
   }
-  function validate(project, tools, resources, prompts, envs) {
+
+  function chooseTemplate(id){
+    state.template = id;
+    const template = templates.find(function(t){ return t.id === id; }) || templates[0];
+    renderTemplates();
+    renderPermissions(template.permissions);
+    if(state.items.length === 0){
+      template.permissions.slice(0,2).forEach(function(label){
+        state.items.push(makeItem(label, inferKind(label)));
+      });
+      renderItems();
+    }
+  }
+
+  function renderPermissions(list){
+    $("permissions").innerHTML = list.map(function(label){
+      return '<button type="button" class="soft abilityBtn" data-add-permission="'+escapeHtml(label)+'">Add: '+escapeHtml(label)+'</button>';
+    }).join("");
+    Array.from(document.querySelectorAll("[data-add-permission]")).forEach(function(btn){
+      btn.addEventListener("click", function(){
+        const label = btn.getAttribute("data-add-permission") || "New ability";
+        const already = state.items.some(function(item){ return opId(item.label) === opId(label); });
+        if(already){
+          showMessage("That ability is already in your integration.", "err");
+          return;
+        }
+        state.items.push(makeItem(label, inferKind(label)));
+        renderItems();
+        showMessage("Ability added: " + escapeHtml(label), "ok");
+      });
+    });
+  }
+
+  function inferKind(label){
+    const text = String(label || "").toLowerCase();
+    if(text.includes("read") || text.includes("search") || text.includes("summarize") || text.includes("answer") || text.includes("find") || text.includes("check")) return "read";
+    return "action";
+  }
+
+  function makeItem(label, kind){
+    const id = state.itemCounter++;
+    const name = opId(label || ("ability " + id));
+    return {
+      id:id,
+      kind:kind || "action",
+      name:name,
+      label:label || "New ability",
+      method:"GET",
+      url:"",
+      secret:"",
+      resourceUri:"business://" + name,
+      instruction:""
+    };
+  }
+
+  function renderItems(){
+    if(state.items.length === 0){
+      $("items").innerHTML = '<div class="empty">Add at least one action, readable data source, or saved instruction.</div>';
+      return;
+    }
+    $("items").innerHTML = state.items.map(function(item){
+      const base =
+        '<div class="item" data-item="'+item.id+'">' +
+        '<div class="itemhead"><strong>'+escapeHtml(kindTitle(item.kind))+'</strong><button class="remove" data-remove="'+item.id+'">Remove</button></div>' +
+        '<label>Plain name</label>' +
+        '<input data-field="label" value="'+escapeHtml(item.label)+'">' +
+        '<p class="hint">Example: Add lead, Search orders, Read product catalog.</p>';
+
+      if(item.kind === "instruction"){
+        return base +
+          '<label>Saved instruction</label>' +
+          '<textarea data-field="instruction">'+escapeHtml(item.instruction)+'</textarea>' +
+          '<p class="hint">This becomes a reusable AI instruction. It does not call an external app.</p></div>';
+      }
+
+      if(item.kind === "read"){
+        return base +
+          '<label>Readable source link</label>' +
+          '<input data-field="url" value="'+escapeHtml(item.url)+'">' +
+          '<p class="hint">Use a real http or https link the MCP may read.</p>' +
+          '<label>Source name used inside MCP</label>' +
+          '<input data-field="resourceUri" value="'+escapeHtml(item.resourceUri)+'">' +
+          '<p class="hint">Example: business://product-catalog</p>' +
+          '<label>Secret name, only if the source is private</label>' +
+          '<input data-field="secret" value="'+escapeHtml(item.secret)+'">' +
+          '<p class="hint">Example: COMPANY_DOCS_TOKEN. Leave empty for public sources.</p></div>';
+      }
+
+      return base +
+        '<div class="row2"><div><label>What happens</label><select data-field="method">' +
+        selectOption("GET", item.method, "Read or search") +
+        selectOption("POST", item.method, "Create") +
+        selectOption("PUT", item.method, "Replace") +
+        selectOption("PATCH", item.method, "Update") +
+        selectOption("DELETE", item.method, "Delete") +
+        '</select></div><div><label>Secret name, if needed</label><input data-field="secret" value="'+escapeHtml(item.secret)+'"></div></div>' +
+        '<label>Real app action link</label>' +
+        '<input data-field="url" value="'+escapeHtml(item.url)+'">' +
+        '<p class="hint">Use the actual http or https link this action will call. Private apps usually need a secret name above.</p></div>';
+    }).join("");
+
+    Array.from(document.querySelectorAll("[data-field]")).forEach(function(field){
+      field.addEventListener("input", updateField);
+      field.addEventListener("change", updateField);
+    });
+    Array.from(document.querySelectorAll("[data-remove]")).forEach(function(btn){
+      btn.addEventListener("click", function(){
+        const id = Number(btn.getAttribute("data-remove"));
+        state.items = state.items.filter(function(x){ return x.id !== id; });
+        renderItems();
+      });
+    });
+  }
+
+  function selectOption(value, current, label){
+    return '<option value="'+value+'" '+(value===current ? "selected" : "")+'>'+escapeHtml(label)+'</option>';
+  }
+
+  function kindTitle(kind){
+    if(kind === "read") return "Readable data";
+    if(kind === "instruction") return "Saved instruction";
+    return "Action";
+  }
+
+  function updateField(event){
+    const wrapper = event.target.closest("[data-item]");
+    const id = Number(wrapper.getAttribute("data-item"));
+    const field = event.target.getAttribute("data-field");
+    const item = state.items.find(function(x){ return x.id === id; });
+    if(!item) return;
+    item[field] = event.target.value;
+    if(field === "label"){
+      item.name = opId(event.target.value);
+      if(item.kind === "read" && (!item.resourceUri || item.resourceUri.indexOf("business://") === 0)){
+        item.resourceUri = "business://" + item.name;
+      }
+    }
+  }
+
+  function validate(){
     const errors = [];
-    if (!/^[a-z0-9][a-z0-9-]*$/.test(project)) errors.push("MCP name must use lowercase letters, numbers, and hyphens only.");
-    if (!tools.length && !resources.length && !prompts.length) errors.push("Add at least one real action, readable data source, or reusable instruction.");
-    const toolNames = tools.map(t => t.name);
-    const promptNames = prompts.map(p => p.name);
-    const resUris = resources.map(r => r.uri);
-    if (unique(toolNames).length !== toolNames.length) errors.push("Action operation IDs must be unique.");
-    if (unique(promptNames).length !== promptNames.length) errors.push("Instruction operation IDs must be unique.");
-    if (unique(resUris).length !== resUris.length) errors.push("Readable data MCP URIs must be unique.");
-    tools.forEach((t, i) => {
-      if (!t.title) errors.push(`Action ${i + 1} needs a name.`);
-      if (!validOp(t.name)) errors.push(`Action ${i + 1} operation ID must start with a lowercase letter and use letters, numbers, or underscores.`);
-      if (!t.description) errors.push(`Action ${i + 1} needs a plain description.`);
-      if (!validUrl(t.url)) errors.push(`Action ${i + 1} needs a real http or https API URL.`);
-      if (t.authEnv && !validEnv(t.authEnv)) errors.push(`Action ${i + 1} secret key name is invalid.`);
-      const inputs = parseInputs(t.inputs);
-      if (!inputs.length) errors.push(`Action ${i + 1} needs at least one input name.`);
-      inputs.forEach((v) => { if (!/^[a-z][a-z0-9_]*$/.test(v)) errors.push(`Action ${i + 1} input '${v}' is invalid.`); });
+    const project = slug($("projectName").value);
+    if(!project) errors.push("Add an integration name using lowercase letters, numbers, and dashes.");
+    if(state.items.length === 0) errors.push("Add at least one ability.");
+
+    const names = new Set();
+    const uris = new Set();
+    state.items.forEach(function(item){
+      const cleanName = opId(item.label);
+      if(!cleanName) errors.push("Every ability needs a clear name.");
+      if(names.has(cleanName)) errors.push("Ability names must be unique: " + item.label);
+      names.add(cleanName);
+
+      if(!validEnv(item.secret || "")) errors.push("Secret names must use capital letters, numbers, and underscores: " + item.label);
+
+      if(item.kind === "action" && !validUrl(item.url)){
+        errors.push("Add a real http or https action link for: " + item.label);
+      }
+
+      if(item.kind === "read"){
+        if(!validUrl(item.url)) errors.push("Add a real http or https readable source link for: " + item.label);
+        if(!validResourceUri(item.resourceUri)) errors.push("Readable source name must look like business://name for: " + item.label);
+        if(uris.has(item.resourceUri)) errors.push("Readable source names must be unique: " + item.resourceUri);
+        uris.add(item.resourceUri);
+      }
+
+      if(item.kind === "instruction" && String(item.instruction || "").trim().length < 12){
+        errors.push("Saved instruction is too short for: " + item.label);
+      }
     });
-    resources.forEach((r, i) => {
-      if (!r.title) errors.push(`Readable data ${i + 1} needs a label.`);
-      if (!validResourceUri(r.uri)) errors.push(`Readable data ${i + 1} needs a valid MCP URI such as market://status.`);
-      if (!validUrl(r.url)) errors.push(`Readable data ${i + 1} needs a real http or https data URL.`);
-      if (r.authEnv && !validEnv(r.authEnv)) errors.push(`Readable data ${i + 1} secret key name is invalid.`);
-    });
-    prompts.forEach((p, i) => {
-      if (!p.title) errors.push(`Instruction ${i + 1} needs a name.`);
-      if (!validOp(p.name)) errors.push(`Instruction ${i + 1} operation ID must start with a lowercase letter and use letters, numbers, or underscores.`);
-      if (!p.text) errors.push(`Instruction ${i + 1} needs instruction text.`);
-    });
-    envs.forEach((e) => { if (!validEnv(e)) errors.push(`Secret key '${e}' is invalid. Use uppercase letters, numbers, and underscores.`); });
-    return unique(errors);
+
+    return {ok:errors.length===0, errors:errors, project:project};
   }
-  function parseInputs(value) {
-    return unique(String(value || "").split(",").map(x => x.trim()).filter(Boolean));
+
+  function collectSecrets(){
+    const set = new Set();
+    state.items.forEach(function(item){
+      if(item.secret) set.add(item.secret);
+    });
+    if($("startPaused").checked) set.add("MCP_CREATOR_ENABLED");
+    return Array.from(set).sort();
   }
-  function jsonString(value) { return JSON.stringify(value); }
-  function generateIndex(project, tools, resources, prompts) {
-    const toolBlocks = tools.map((t) => {
-      const inputs = parseInputs(t.inputs);
-      const schemaLines = inputs.map(name => `      ${name}: z.string().min(1).describe(${jsonString(name)})`).join(",\n");
-      return `server.registerTool(
-  ${jsonString(t.name)},
+
+  function buildPackage(){
+    const result = validate();
+    if(!result.ok){
+      showMessage(result.errors.join("<br>"), "err");
+      return;
+    }
+    const project = result.project;
+    const requireApproval = $("askBeforeChanges").checked;
+    const actions = state.items.filter(function(x){ return x.kind === "action"; }).map(normalizeItem);
+    actions.forEach(function(action){
+      action.requiresConfirm = requireApproval && ["POST", "PUT", "PATCH", "DELETE"].includes(action.method);
+    });
+    const reads = state.items.filter(function(x){ return x.kind === "read"; }).map(normalizeItem);
+    const instructions = state.items.filter(function(x){ return x.kind === "instruction"; }).map(normalizeItem);
+    const secrets = collectSecrets();
+
+    const files = {
+      "Project map": projectMap(project, actions, reads, instructions, secrets),
+      "One terminal script": shellScript(project, packageJson(project), tsconfig(), indexTs(project, actions, reads, instructions, secrets), mcpJson(project, secrets), readme(project, actions, reads, instructions, secrets)),
+      "package.json": packageJson(project),
+      "tsconfig.json": tsconfig(),
+      "src/index.ts": indexTs(project, actions, reads, instructions, secrets),
+      ".vscode/mcp.json": mcpJson(project, secrets),
+      "README.md": readme(project, actions, reads, instructions, secrets),
+      "Test checklist": testChecklist(project, actions, reads, instructions)
+    };
+
+    renderOutput(project, actions, reads, instructions, secrets, files);
+    showMessage("Package created. Copy the terminal script first, then review the README.", "ok");
+  }
+
+  function normalizeItem(item){
+    return {
+      name: opId(item.label),
+      label: String(item.label || "").trim(),
+      method: item.method || "GET",
+      url: String(item.url || "").trim(),
+      secret: String(item.secret || "").trim(),
+      resourceUri: String(item.resourceUri || "").trim(),
+      instruction: String(item.instruction || "").trim()
+    };
+  }
+
+  function packageJson(project){
+    return JSON.stringify({
+      name:project,
+      version:"1.0.0",
+      type:"module",
+      scripts:{build:"tsc", start:"node build/index.js"},
+      dependencies:{"@modelcontextprotocol/sdk":"1.29.0","zod":"^3.24.1"},
+      devDependencies:{"@types/node":"^22.10.0","typescript":"^5.7.0"},
+      engines:{node:">=20.0.0"}
+    }, null, 2);
+  }
+
+  function tsconfig(){
+    return JSON.stringify({
+      compilerOptions:{
+        target:"ES2022",
+        module:"NodeNext",
+        moduleResolution:"NodeNext",
+        outDir:"build",
+        rootDir:"src",
+        strict:true,
+        esModuleInterop:true,
+        skipLibCheck:true,
+        forceConsistentCasingInFileNames:true
+      },
+      include:["src"]
+    }, null, 2);
+  }
+
+  function authHeader(secret){
+    if(!secret) return "";
+    return `
+  const token = process.env["${safeText(secret)}"];
+  if (!token) {
+    throw new Error("Missing required secret: ${safeText(secret)}");
+  }
+  headers.set("Authorization", \`Bearer \${token}\`);`;
+  }
+
+  function actionCode(action){
+    const isBody = ["POST","PUT","PATCH"].includes(action.method);
+    const confirmGate = action.requiresConfirm ? `
+      if (input.confirm_change !== true) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "This action changes business data. Send confirm_change=true only after the user clearly approves this exact change." }]
+        };
+      }` : "";
+    return `
+server.tool(
+  "${safeText(action.name)}",
+  "${safeText(action.label)}${action.requiresConfirm ? " - requires explicit user approval before running" : ""}",
   {
-    title: ${jsonString(t.title)},
-    description: ${jsonString(t.description)},
-    inputSchema: z.object({
-${schemaLines}
-    })
+    input: z.record(z.unknown()).describe("Details for this action${action.requiresConfirm ? "; include confirm_change=true after explicit user approval" : ""}")
   },
-  async (args) => {
-    const data = await callApi({
-      method: ${jsonString(t.method)},
-      urlTemplate: ${jsonString(t.url)},
-      authEnv: ${jsonString(t.authEnv)},
-      args
-    });
-    return { content: [{ type: "text", text: data }] };
+  async ({ input }) => {
+    try {
+      ensureEnabled();${confirmGate}
+      let urlText = "${safeText(action.url)}";
+      const remainingInput: Record<string, unknown> = { ...input };
+      for (const [key, value] of Object.entries(input)) {
+        const token = "{" + key + "}";
+        if (urlText.includes(token)) {
+          urlText = urlText.split(token).join(encodeURIComponent(String(value)));
+          delete remainingInput[key];
+        }
+      }
+      const url = new URL(urlText);
+      const headers = new Headers();
+      headers.set("Accept", "application/json, text/plain;q=0.9, */*;q=0.8");${isBody ? '\n      headers.set("Content-Type", "application/json");' : ""}${authHeader(action.secret)}
+      ${isBody ? 'const request: RequestInit = { method: "'+action.method+'", headers, body: JSON.stringify(remainingInput) };' : 'for (const [key, value] of Object.entries(remainingInput)) {\n        if (value !== undefined && value !== null) url.searchParams.set(key, String(value));\n      }\n      const request: RequestInit = { method: "'+action.method+'", headers };'}
+      const response = await fetch(url, request);
+      const text = await response.text();
+      if (!response.ok) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: \`Action failed with HTTP \${response.status}: \${text.slice(0, 1000)}\` }]
+        };
+      }
+      return toMcpResponse(text);
+    } catch (error) {
+      return {
+        isError: true,
+        content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }]
+      };
+    }
   }
 );`;
-    }).join("\n\n");
-    const resourceBlocks = resources.map((r, index) => `server.registerResource(
-  ${jsonString("resource_" + (index + 1))},
-  ${jsonString(r.uri)},
-  { title: ${jsonString(r.title)} },
-  async (uri) => ({
-    contents: [{ uri: uri.href, text: await fetchText(${jsonString(r.url)}, ${jsonString(r.authEnv)}) }]
-  })
-);`).join("\n\n");
-    const promptBlocks = prompts.map((p) => `server.registerPrompt(
-  ${jsonString(p.name)},
+  }
+
+  function resourceCode(resource){
+    return `
+server.resource(
+  "${safeText(resource.name)}",
+  "${safeText(resource.resourceUri)}",
   {
-    title: ${jsonString(p.title)},
-    argsSchema: {
-      input: z.string().min(1).describe("Content to use with this instruction")
-    }
+    title: "${safeText(resource.label)}",
+    description: "Approved readable source"
   },
-  ({ input }) => ({
+  async (uri) => {
+    ensureEnabled();
+    const headers = new Headers();
+    headers.set("Accept", "application/json, text/plain;q=0.9, */*;q=0.8");${authHeader(resource.secret)}
+    const response = await fetch("${safeText(resource.url)}", { method: "GET", headers });
+    const text = await response.text();
+    if (!response.ok) {
+      throw new Error(\`Readable source failed with HTTP \${response.status}: \${text.slice(0, 1000)}\`);
+    }
+    return {
+      contents: [{ uri: uri.href, text }]
+    };
+  }
+);`;
+  }
+
+  function promptCode(prompt){
+    return `
+server.prompt(
+  "${safeText(prompt.name)}",
+  "${safeText(prompt.label)}",
+  {
+    topic: z.string().describe("What the user wants help with")
+  },
+  ({ topic }) => ({
     messages: [{
       role: "user",
-      content: { type: "text", text: ${jsonString(p.text + "\n\nInput:\n")} + input }
+      content: {
+        type: "text",
+        text: \`${safeText(prompt.instruction)}\\n\\nUser request: \${topic}\`
+      }
     }]
   })
-);`).join("\n\n");
-    return `#!/usr/bin/env node
-import { McpServer } from "@modelcontextprotocol/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/server/stdio.js";
+);`;
+  }
+
+  function indexTs(project, actions, reads, instructions, secrets){
+    const pausedDefault = $("startPaused").checked ? "false" : "true";
+    return `import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-const server = new McpServer({ name: ${jsonString(project)}, version: "1.0.0" });
+const server = new McpServer({
+  name: "${safeText(project)}",
+  version: "1.0.0"
+});
 
-function applyUrlInputs(urlTemplate, args) {
-  let url = urlTemplate;
-  const remaining = { ...args };
-  for (const [key, value] of Object.entries(args)) {
-    const token = "{" + key + "}";
-    if (url.includes(token)) {
-      url = url.split(token).join(encodeURIComponent(String(value)));
-      delete remaining[key];
-    }
+function ensureEnabled(): void {
+  const enabled = process.env.MCP_CREATOR_ENABLED ?? "${pausedDefault}";
+  if (enabled !== "true") {
+    throw new Error("This MCP integration is paused. Set MCP_CREATOR_ENABLED=true to enable it.");
   }
-  return { url, remaining };
 }
 
-async function fetchText(url, authEnv) {
-  const headers: Record<string, string> = { accept: "application/json, text/plain;q=0.9, */*;q=0.8" };
-  if (authEnv) {
-    const token = process.env[authEnv];
-    if (!token) throw new Error("Missing required environment variable: " + authEnv);
-    headers.authorization = "Bearer " + token;
+function toMcpResponse(text: string) {
+  try {
+    const json = JSON.parse(text);
+    return {
+      content: [{ type: "text" as const, text: JSON.stringify(json, null, 2) }],
+      structuredContent: json
+    };
+  } catch {
+    return {
+      content: [{ type: "text" as const, text }]
+    };
   }
-  const response = await fetch(url, { headers });
-  const body = await response.text();
-  if (!response.ok) throw new Error("HTTP " + response.status + " from " + url + ": " + body.slice(0, 600));
-  return body;
 }
-
-async function callApi({ method, urlTemplate, authEnv, args }) {
-  const { url, remaining } = applyUrlInputs(urlTemplate, args);
-  const headers: Record<string, string> = { accept: "application/json, text/plain;q=0.9, */*;q=0.8" };
-  if (authEnv) {
-    const token = process.env[authEnv];
-    if (!token) throw new Error("Missing required environment variable: " + authEnv);
-    headers.authorization = "Bearer " + token;
-  }
-  let finalUrl = url;
-  const init = { method, headers };
-  if (["GET", "DELETE"].includes(method)) {
-    const u = new URL(finalUrl);
-    for (const [key, value] of Object.entries(remaining)) u.searchParams.set(key, String(value));
-    finalUrl = u.toString();
-  } else {
-    headers["content-type"] = "application/json";
-    init.body = JSON.stringify(remaining);
-  }
-  const response = await fetch(finalUrl, init);
-  const body = await response.text();
-  if (!response.ok) throw new Error("HTTP " + response.status + " from " + finalUrl + ": " + body.slice(0, 600));
-  return body;
-}
-
-${toolBlocks}
-
-${resourceBlocks}
-
-${promptBlocks}
+${actions.map(actionCode).join("\n")}
+${reads.map(resourceCode).join("\n")}
+${instructions.map(promptCode).join("\n")}
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error(${jsonString(project + " MCP server running on stdio")});
 `;
   }
-  function packageJson(project) {
+
+  function mcpJson(project, secrets){
+    const env = {};
+    secrets.forEach(function(secret){
+      env[secret] = "${env:" + secret + "}";
+    });
     return JSON.stringify({
-      name: project,
-      version: "1.0.0",
-      type: "module",
-      private: true,
-      bin: { [project]: "./build/index.js" },
-      scripts: { build: "tsc && chmod 755 build/index.js", start: "node build/index.js" },
-      dependencies: { "@modelcontextprotocol/server": "latest", "zod": "latest" },
-      devDependencies: { "@types/node": "latest", "typescript": "latest" },
-      engines: { node: ">=20" }
+      servers:{
+        [project]:{
+          command:"node",
+          args:["build/index.js"],
+          env:env
+        }
+      }
     }, null, 2);
   }
-  function tsconfig() {
-    return JSON.stringify({ compilerOptions: { target: "ES2022", module: "NodeNext", moduleResolution: "NodeNext", outDir: "build", rootDir: "src", strict: true, esModuleInterop: true, skipLibCheck: true }, include: ["src/**/*.ts"] }, null, 2);
-  }
-  function vscode(project, envs) {
-    const env = {};
-    envs.forEach(e => env[e] = "${env:" + e + "}");
-    return JSON.stringify({ servers: { [project]: { type: "stdio", command: "node", args: ["./build/index.js"], env } } }, null, 2);
-  }
-  function readme(project, tools, resources, prompts, envs) {
-    const lines = [];
-    lines.push(`# ${project}`);
-    lines.push("");
-    lines.push("API-backed MCP server generated by MCP Creator.");
-    lines.push("");
-    lines.push("## Capabilities");
-    tools.forEach(t => lines.push(`- Action: ${t.title} -> ${t.method} ${t.url}`));
-    resources.forEach(r => lines.push(`- Readable data: ${r.title} -> ${r.url}`));
-    prompts.forEach(p => lines.push(`- Reusable instruction: ${p.title}`));
-    if (envs.length) {
-      lines.push("");
-      lines.push("## Required environment variables");
-      envs.forEach(e => lines.push(`- ${e}`));
-    }
-    lines.push("");
-    lines.push("## Run");
-    lines.push("```bash");
-    lines.push("npm install");
-    lines.push("npm run build");
-    lines.push("npm start");
-    lines.push("```");
-    return lines.join("\n");
-  }
-  function fileMap(project, tools, resources, prompts) {
+
+  function projectMap(project, actions, reads, instructions, secrets){
     return `${project}/
 ├─ package.json
 ├─ tsconfig.json
@@ -443,85 +747,245 @@ console.error(${jsonString(project + " MCP server running on stdio")});
 └─ src/
    └─ index.ts
 
-Actions: ${tools.length}
-Readable data sources: ${resources.length}
-Reusable instructions: ${prompts.length}`;
+Allowed AI actions:
+${actions.length ? actions.map(function(a){ return "• " + a.label + " -> " + a.method + " " + a.url; }).join("\n") : "• None"}
+
+Readable data:
+${reads.length ? reads.map(function(r){ return "• " + r.label + " -> " + r.url; }).join("\n") : "• None"}
+
+Saved instructions:
+${instructions.length ? instructions.map(function(p){ return "• " + p.label; }).join("\n") : "• None"}
+
+Required secrets:
+${secrets.length ? secrets.map(function(s){ return "• " + s; }).join("\n") : "• None"}`;
   }
-  function shellScript(project, files) {
-    const parts = [`mkdir -p ${project}/src ${project}/.vscode`, `cd ${project}`];
-    Object.entries(files).forEach(([name, content]) => {
-      const tag = shellSafeHeredoc(name, content);
-      parts.push(`cat > ${name} <<'${tag}'\n${content}\n${tag}`);
-    });
-    parts.push("npm install");
-    parts.push("npm run build");
-    return parts.join("\n\n");
+
+  function shellScript(project, pkg, ts, index, mcp, readmeText){
+    const secrets = collectSecrets();
+    const guards = secrets.map(function(secret){
+      return ': "${' + secret + ':?Set ' + secret + ' before running this script}"';
+    }).join("\n");
+    return `set -e
+
+mkdir -p ${project}/src ${project}/.vscode
+cd ${project}
+${guards ? guards + "\n" : ""}
+cat > package.json <<'FILE'
+${pkg}
+FILE
+
+cat > tsconfig.json <<'FILE'
+${ts}
+FILE
+
+cat > README.md <<'FILE'
+${readmeText}
+FILE
+
+cat > .vscode/mcp.json <<'FILE'
+${mcp}
+FILE
+
+cat > src/index.ts <<'FILE'
+${index}
+FILE
+
+npm install
+npm run build
+
+echo "MCP package created. Start it with: npm start"
+`;
   }
-  function block(title, id, text) {
-    return `<div class="block"><div class="blockhead"><span>${safeText(title)}</span><button class="copy mini" data-copy="${id}">Copy</button></div><pre id="${id}">${safeText(text)}</pre></div>`;
+
+  function readme(project, actions, reads, instructions, secrets){
+    return `# ${project}
+
+This MCP package was generated by MCP Creator Local.
+
+## What this integration allows
+
+### Actions
+${actions.length ? actions.map(function(a){ return "- " + a.label + " using " + a.method + " " + a.url; }).join("\n") : "- No external actions"}
+
+### Readable data
+${reads.length ? reads.map(function(r){ return "- " + r.label + " from " + r.url; }).join("\n") : "- No readable sources"}
+
+### Saved instructions
+${instructions.length ? instructions.map(function(p){ return "- " + p.label; }).join("\n") : "- No saved instructions"}
+
+## Required secrets
+
+${secrets.length ? secrets.map(function(s){ return "- " + s; }).join("\n") : "No secrets are required."}
+
+Set each secret in your terminal or hosting environment before running the server.
+
+## Run
+
+\`\`\`bash
+npm install
+npm run build
+npm start
+\`\`\`
+
+## Pause or enable
+
+Set this value before starting the server:
+
+\`\`\`bash
+export MCP_CREATOR_ENABLED=true
+\`\`\`
+
+Set it to false to pause the integration.
+
+## Safety note
+
+Review every action link and permission before connecting this MCP to an AI client. When approval protection is enabled, changing actions require confirm_change=true. Use that only after the user clearly approves the exact change.
+`;
   }
-  function setStatus(message, good) {
-    const el = $("status");
-    el.className = "status " + (good ? "good" : "bad");
-    el.textContent = message;
-  }
-  function build() {
-    const project = cleanName($("projectName").value, "");
-    const tools = readRows("tool").map(t => ({ ...t, name: operationName(t.name || t.title), method: t.method || "GET" }));
-    const resources = readRows("resource");
-    const prompts = readRows("prompt").map(p => ({ ...p, name: operationName(p.name || p.title) }));
-    const envs = unique($("envVars").value.split(/\n+/).map(x => x.trim()).filter(Boolean));
-    const errors = validate(project, tools, resources, prompts, envs);
-    if (errors.length) {
-      setStatus(errors.join(" "), false);
-      $("outputs").innerHTML = "";
-      return;
+
+  function testChecklist(project, actions, reads, instructions){
+    const lines = [];
+    lines.push("Test this MCP after installation:");
+    lines.push("");
+    lines.push("1. Start the MCP server with npm start.");
+    lines.push("2. Add the .vscode/mcp.json content to your MCP-capable client when needed.");
+    lines.push("3. Ask your AI client one safe question first.");
+    if(reads.length){
+      lines.push("");
+      lines.push("Readable data tests:");
+      reads.forEach(function(r){
+        lines.push("- Ask: Read " + r.label + " and summarize it in 5 bullet points.");
+      });
     }
-    const files = {
-      "package.json": packageJson(project),
-      "tsconfig.json": tsconfig(),
-      "README.md": readme(project, tools, resources, prompts, envs),
-      ".vscode/mcp.json": vscode(project, envs),
-      "src/index.ts": generateIndex(project, tools, resources, prompts)
-    };
-    const script = shellScript(project, files);
-    $("outputs").innerHTML = [
-      block("Project map", "mapOut", fileMap(project, tools, resources, prompts)),
-      block("One-shot terminal script", "scriptOut", script),
-      block("src/index.ts", "indexOut", files["src/index.ts"]),
-      block("package.json", "pkgOut", files["package.json"]),
-      block("tsconfig.json", "tsOut", files["tsconfig.json"]),
-      block(".vscode/mcp.json", "mcpOut", files[".vscode/mcp.json"]),
-      block("README.md", "readmeOut", files["README.md"])
-    ].join("");
-    document.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => copyBlock(btn.dataset.copy)));
-    setStatus("Generated a real API-backed MCP package.", true);
+    if(actions.length){
+      lines.push("");
+      lines.push("Action tests:");
+      actions.forEach(function(a){
+        lines.push("- Ask: Use " + a.label + " with a harmless test input.");
+      });
+    }
+    if(instructions.length){
+      lines.push("");
+      lines.push("Saved instruction tests:");
+      instructions.forEach(function(p){
+        lines.push("- Ask: Use " + p.label + " for a simple request.");
+      });
+    }
+    lines.push("");
+    lines.push("Expected result: the AI either returns real data from the connected source or shows a clear error from the real app connection.");
+    return lines.join("\n");
   }
-  function copyBlock(id) {
-    const text = $(id).innerText;
-    navigator.clipboard.writeText(text).catch(() => {
-      const range = document.createRange();
-      range.selectNodeContents($(id));
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
+
+  function renderOutput(project, actions, reads, instructions, secrets, files){
+    const fileNames = Object.keys(files);
+    $("outputArea").className = "";
+    $("outputArea").innerHTML =
+      '<div class="summary">' +
+        '<div><b>Integration</b><span>'+escapeHtml(project)+'</span></div>' +
+        '<div><b>Abilities</b><span>'+escapeHtml(String(actions.length + reads.length + instructions.length))+'</span></div>' +
+        '<div><b>Secrets</b><span>'+escapeHtml(secrets.length ? secrets.join(", ") : "None")+'</span></div>' +
+      '</div>' +
+      '<div class="notice ok">This package uses only the real links and secret names you entered. It does not include hidden sample services or silent fallbacks.</div>' +
+      '<div class="tabs">'+fileNames.map(function(name, idx){
+        return '<button class="tab" data-tab="'+escapeHtml(name)+'" aria-selected="'+(idx===0)+'">'+escapeHtml(name)+'</button>';
+      }).join("")+'</div>' +
+      '<div id="fileBlocks">'+fileNames.map(function(name, idx){
+        return block(name, files[name], idx===0);
+      }).join("")+'</div>';
+
+    Array.from(document.querySelectorAll("[data-tab]")).forEach(function(btn){
+      btn.addEventListener("click", function(){
+        const name = btn.getAttribute("data-tab");
+        Array.from(document.querySelectorAll("[data-tab]")).forEach(function(x){ x.setAttribute("aria-selected", String(x === btn)); });
+        Array.from(document.querySelectorAll("[data-file]")).forEach(function(x){ x.style.display = x.getAttribute("data-file") === name ? "block" : "none"; });
+      });
+    });
+    Array.from(document.querySelectorAll("[data-copy]")).forEach(function(btn){
+      btn.addEventListener("click", function(){
+        copy(btn.getAttribute("data-copy"));
+      });
+    });
+    Array.from(document.querySelectorAll("[data-download]")).forEach(function(btn){
+      btn.addEventListener("click", function(){
+        downloadFile(btn.getAttribute("data-download"), files[btn.getAttribute("data-download")]);
+      });
     });
   }
-  function clearAll() {
-    $("projectName").value = "";
-    $("toolRows").innerHTML = "";
-    $("resourceRows").innerHTML = "";
-    $("promptRows").innerHTML = "";
-    $("envVars").value = "";
-    $("outputs").innerHTML = "";
-    $("status").className = "status";
-    $("status").textContent = "Add at least one real action, readable data source, or reusable instruction. Then create the MCP files.";
+
+  function block(name, text, shown){
+    const id = "block_" + name.replace(/[^a-z0-9]/gi,"_");
+    return '<div class="block" data-file="'+escapeHtml(name)+'" style="display:'+(shown ? "block" : "none")+'">' +
+      '<div class="blockhead"><span>'+escapeHtml(name)+'</span><div><button class="mini" data-copy="'+id+'">Copy</button> <button class="mini" data-download="'+escapeHtml(name)+'">Download</button></div></div>' +
+      '<pre id="'+id+'">'+escapeHtml(text)+'</pre></div>';
   }
-  $("addTool").addEventListener("click", () => addToolRow());
-  $("addResource").addEventListener("click", () => addResourceRow());
-  $("addPrompt").addEventListener("click", () => addPromptRow());
-  $("build").addEventListener("click", build);
-  $("clearAll").addEventListener("click", clearAll);
+
+  function copy(id){
+    const text = $(id).innerText;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).catch(function(){ fallbackCopy(text); });
+    }else{
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text){
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "readonly");
+    area.style.position = "fixed";
+    area.style.left = "-9999px";
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    document.body.removeChild(area);
+  }
+
+  function downloadFile(name, text){
+    const safe = name.replace(/\//g,"_").replace(/^\./,"dot-");
+    const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = safe;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function showMessage(text, type){
+    $("message").innerHTML = '<div class="notice '+type+'">'+text+'</div>';
+  }
+
+  $("addAction").addEventListener("click", function(){
+    state.items.push(makeItem("New action", "action"));
+    renderItems();
+  });
+  $("addReadable").addEventListener("click", function(){
+    state.items.push(makeItem("New readable source", "read"));
+    renderItems();
+  });
+  $("addInstruction").addEventListener("click", function(){
+    state.items.push(makeItem("New saved instruction", "instruction"));
+    renderItems();
+  });
+  $("generate").addEventListener("click", buildPackage);
+  $("clearAll").addEventListener("click", function(){
+    $("projectName").value = "";
+    state.items = [];
+    state.itemCounter = 1;
+    state.template = "custom";
+    $("message").innerHTML = "";
+    $("outputArea").className = "empty";
+    $("outputArea").textContent = "Complete the steps on the left, then create your MCP package.";
+    renderTemplates();
+    renderPermissions(templates[0].permissions);
+    renderItems();
+  });
+
+  renderTemplates();
+  renderPermissions(templates[0].permissions);
+  renderItems();
 })();
 </script>
 </body>
