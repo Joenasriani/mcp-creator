@@ -38,6 +38,8 @@
     button{border:2px solid var(--line);background:var(--ink);color:var(--gold);padding:11px 13px;font-weight:900;box-shadow:4px 4px 0 var(--line);cursor:pointer}
     button.secondary{background:var(--paper);color:var(--ink)}
     button.soft{background:var(--soft);color:var(--ink)}
+    .navbtn{background:var(--paper);color:var(--ink)}
+    .navbtn.is-active{background:var(--ink);color:var(--gold)}
     button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line)}
     .btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
     .modegrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
@@ -109,9 +111,9 @@
       <h1>Create MCP integrations your way.</h1>
       <p class="lead">Choose the easiest guided path or the longer developer path. Both produce a real local MCP package only when the required real connection details are provided.</p>
       <div class="btns">
-        <button class="secondary" data-view="home">Home</button>
-        <button data-view="simple">Non-dev easiest path</button>
-        <button class="secondary" data-view="advanced">Developer detailed path</button>
+        <button class="navbtn is-active" data-view="home" aria-current="page">Home</button>
+        <button class="navbtn" data-view="simple" aria-current="false">Non-dev easiest path</button>
+        <button class="navbtn" data-view="advanced" aria-current="false">Developer detailed path</button>
       </div>
     </section>
 
@@ -366,9 +368,10 @@
 
   function showView(id){
     qsa(".view").forEach(v => v.classList.toggle("active", v.id === id));
-    qsa("[data-view]").forEach(b => {
-      const active = b.dataset.view === id;
-      b.classList.toggle("secondary", !active && b.dataset.view !== "simple");
+    qsa(".navbtn[data-view]").forEach(button => {
+      const active = button.dataset.view === id;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-current", active ? "page" : "false");
     });
   }
 
