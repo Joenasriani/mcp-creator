@@ -3,61 +3,65 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MCP Creator Simple</title>
+  <title>MCP Creator</title>
   <style>
     :root{
-      --bg:#f6f1e7;
-      --paper:#fffaf0;
-      --ink:#16120b;
-      --muted:#6a6256;
+      --bg:#f4ecde;
+      --paper:#fff7e8;
+      --ink:#17120b;
+      --muted:#6b6254;
       --line:#211a10;
-      --soft:#efe5d5;
-      --soft2:#e4f2ec;
+      --soft:#eadfcc;
+      --soft2:#dcefe6;
       --green:#147461;
-      --orange:#bd6532;
-      --red:#9d3328;
+      --orange:#b95f2f;
+      --red:#963327;
       --code:#111418;
-      --codetext:#edf4ed;
+      --codetext:#d8e7d5;
+      --gold:#f2d9a7;
       --shadow:7px 7px 0 var(--line);
     }
     *{box-sizing:border-box}
+    .layout > *, .modegrid > *, .templates > *, .abilitygrid > *, .summary > *, .hero > *, .panel, .out, .side, .choice, .rowbox, .block{min-width:0}
+    h1,h2,h3,p,li,label,span,strong,button{overflow-wrap:anywhere}
     html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
-    body{
-      background-image:
-        radial-gradient(circle at 14px 14px, rgba(22,18,11,.07) 1.2px, transparent 1.2px);
-      background-size:28px 28px;
-    }
-    .wrap{max-width:1160px;margin:0 auto;padding:20px}
-    .hero,.card,.side,.out{background:var(--paper);border:2px solid var(--line);box-shadow:var(--shadow)}
-    .hero{padding:25px;margin-bottom:16px;display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:center}
-    @media(max-width:840px){.hero{grid-template-columns:1fr}.wrap{padding:13px}}
-    .tag{font:800 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--green)}
-    h1{font-size:clamp(34px,6vw,66px);line-height:.92;letter-spacing:-.065em;margin:10px 0}
-    h2{font-size:22px;letter-spacing:-.03em;margin:0 0 10px}
-    h3{font-size:17px;margin:0 0 7px}
+    body{background-image:radial-gradient(circle at 14px 14px,rgba(23,18,11,.07) 1.15px,transparent 1.15px);background-size:28px 28px}
+    .wrap{max-width:1180px;margin:0 auto;padding:20px}
+    .panel,.hero,.out,.side{background:var(--paper);border:2px solid var(--line);box-shadow:var(--shadow)}
+    .hero{padding:25px;margin-bottom:16px}
+    .tag{font:850 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--green)}
+    h1{font-size:clamp(36px,6vw,68px);line-height:.92;letter-spacing:-.065em;margin:10px 0}
+    h2{font-size:23px;letter-spacing:-.03em;margin:0 0 10px}
+    h3{font-size:17px;margin:0 0 8px}
     p,li{color:var(--muted);line-height:1.5}
-    .hero p{font-size:17px;margin:0}
-    .status{border:2px solid var(--line);background:var(--soft2);padding:13px}
-    .status b{display:block;margin-bottom:4px}
+    .lead{font-size:17px;max-width:900px;margin:0}
+    button{border:2px solid var(--line);background:var(--ink);color:var(--gold);padding:11px 13px;font-weight:900;box-shadow:4px 4px 0 var(--line);cursor:pointer}
+    button.secondary{background:var(--paper);color:var(--ink)}
+    button.soft{background:var(--soft);color:var(--ink)}
+    button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line)}
+    .btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+    .modegrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+    @media(max-width:820px){.modegrid{grid-template-columns:1fr}.wrap{padding:13px}}
+    .choice{border:2px solid var(--line);background:var(--soft);padding:18px;min-height:250px;display:flex;flex-direction:column;justify-content:space-between}
+    .choice strong{font-size:24px;letter-spacing:-.03em;display:block;margin-bottom:8px}
+    .choice ul{padding-left:19px;margin:10px 0}
+    .choice li{margin:5px 0}
+    .view{display:none}
+    .view.active{display:block}
     .layout{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
     @media(max-width:980px){.layout{grid-template-columns:1fr}}
-    .card,.side,.out{padding:17px;margin-bottom:16px}
+    .panel,.out,.side{padding:17px;margin-bottom:16px}
     .step{border-top:2px solid var(--line);padding-top:15px;margin-top:15px}
     .step:first-of-type{border-top:0;padding-top:0;margin-top:0}
-    .stepnum{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:2px solid var(--line);background:var(--ink);color:var(--paper);font-weight:900;margin-right:7px}
+    .stepnum{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:2px solid var(--line);background:var(--ink);color:var(--gold);font-weight:900;margin-right:7px}
     label{display:block;font-weight:850;margin:12px 0 6px}
-    input,select,textarea{
-      width:100%;background:#fffdf7;border:2px solid var(--line);color:var(--ink);
-      padding:11px;font:inherit;border-radius:0;outline:none
-    }
+    input,select,textarea{width:100%;background:#fffdf7;border:2px solid var(--line);color:var(--ink);padding:11px;font:inherit;border-radius:0;outline:none}
     input:focus,textarea:focus,select:focus{outline:3px solid rgba(20,116,97,.2)}
-    textarea{resize:vertical;min-height:80px}
+    textarea{resize:vertical;min-height:98px}
     .small{font-size:12.5px;color:var(--muted);margin:6px 0 0}
     .templates,.abilitygrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:10px}
     @media(max-width:620px){.templates,.abilitygrid{grid-template-columns:1fr}}
-    .tpl,.ability,.rowbox{
-      border:2px solid var(--line);background:var(--soft);padding:12px;cursor:pointer
-    }
+    .tpl,.ability,.rowbox{border:2px solid var(--line);background:var(--soft);padding:12px;cursor:pointer}
     .tpl[aria-selected="true"],.ability[aria-pressed="true"]{background:var(--soft2);outline:4px solid rgba(20,116,97,.2)}
     .tpl strong,.ability strong{display:block;margin-bottom:5px}
     .tpl span,.ability span{font-size:12.5px;color:var(--muted);line-height:1.35;display:block}
@@ -68,14 +72,6 @@
     .remove{background:#fff3ef;color:var(--red);box-shadow:none;padding:7px 9px}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
     @media(max-width:560px){.grid2{grid-template-columns:1fr}}
-    button{
-      border:2px solid var(--line);background:var(--ink);color:var(--paper);padding:11px 13px;
-      font-weight:900;box-shadow:4px 4px 0 var(--line);cursor:pointer
-    }
-    button.secondary{background:var(--paper);color:var(--ink)}
-    button.soft{background:var(--soft);color:var(--ink)}
-    button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line)}
-    .btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
     details{border:2px solid var(--line);background:#fffdf7;padding:10px;margin-top:9px}
     summary{font-weight:850;cursor:pointer}
     .notice{border:2px solid var(--line);padding:12px;margin-top:12px;background:#fff2d5;color:#3c2a08;font-size:13.5px;line-height:1.45}
@@ -89,122 +85,196 @@
     .readyitem.bad{background:#ffe7e2}
     .tabs{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
     .tab{box-shadow:none;background:var(--paper);color:var(--ink);padding:8px 10px}
-    .tab[aria-selected="true"]{background:var(--green);color:white}
-    .block{border:2px solid var(--line);background:var(--code);color:var(--codetext);margin-top:10px}
+    .tab[aria-selected="true"]{background:var(--green);color:var(--gold)}
+    .block{border:2px solid var(--line);background:var(--code);color:var(--codetext);margin-top:10px;max-width:100%;overflow:hidden}
     .blockhead{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#1b1f23;border-bottom:2px solid #34383b;padding:9px}
     .blockhead span{font:850 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;text-transform:uppercase}
     .mini{box-shadow:none;background:#f5eddf;color:var(--ink);padding:6px 8px}
-    pre{margin:0;padding:13px;white-space:pre;overflow:auto;font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
+    pre{margin:0;padding:13px;white-space:pre;overflow:auto;max-width:100%;font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
     .empty{border:2px dashed var(--line);background:var(--soft);padding:18px;color:var(--muted);line-height:1.5}
     .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
     @media(max-width:680px){.summary{grid-template-columns:1fr}}
     .summary div{border:2px solid var(--line);background:var(--soft);padding:10px}
     .summary b{display:block;text-transform:uppercase;font-size:11px;letter-spacing:.05em;margin-bottom:5px}
     .summary span{color:var(--muted);font-size:13px}
-    .footer{color:var(--muted);font-size:12px;line-height:1.45;margin:18px 0 6px}
+    .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .chip{border:2px solid var(--line);background:var(--soft2);padding:7px 9px;font-size:13px;font-weight:850}
+    .footer{color:var(--muted);font-size:12px;line-height:1.45;margin:18px 0 6px;text-align:center}
   </style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div>
-        <div class="tag">MCP Creator Simple</div>
-        <h1>Make an AI integration in plain steps.</h1>
-        <p>This local app helps a non-technical user describe what an AI should be allowed to do, checks what is missing, then exports a clean MCP package.</p>
-      </div>
-      <div class="status">
-        <b>What this version honestly does</b>
-        <p>It creates files you can run or hand to a developer. It does not pretend to log in to Gmail, Shopify, or any app by itself. If a real app connection is needed, the app asks for it clearly.</p>
+      <div class="tag">MCP Creator</div>
+      <h1>Create MCP integrations your way.</h1>
+      <p class="lead">Choose the easiest guided path or the longer developer path. Both produce a real local MCP package only when the required real connection details are provided.</p>
+      <div class="btns">
+        <button class="secondary" data-view="home">Home</button>
+        <button data-view="simple">Non-dev easiest path</button>
+        <button class="secondary" data-view="advanced">Developer detailed path</button>
       </div>
     </section>
 
-    <section class="layout">
-      <div>
-        <section class="card">
-          <div class="step">
-            <h2><span class="stepnum">1</span>Name the integration</h2>
-            <label for="project">What should we call it?</label>
-            <input id="project" autocomplete="off" inputmode="latin" value="">
-            <p class="small">Example: sales-assistant, invoice-helper, product-catalog-ai</p>
+    <section id="home" class="view active">
+      <div class="modegrid">
+        <div class="choice">
+          <div>
+            <strong>Non-dev easiest path</strong>
+            <p>Choose a ready workflow, fill the real connection links, then export a real MCP package.</p>
+            <ul>
+              <li>Best for business users.</li>
+              <li>Minimal technical setup.</li>
+              <li>No guessing. Every exported ability is explicitly selected.</li>
+            </ul>
           </div>
-
-          <div class="step">
-            <h2><span class="stepnum">2</span>Choose what it connects to</h2>
-            <div id="templates" class="templates"></div>
+          <button data-view="simple">Start easy</button>
+        </div>
+        <div class="choice">
+          <div>
+            <strong>Developer detailed path</strong>
+            <p>Use templates, actions, readable sources, instructions, advanced method settings, secure secret names, and full file export.</p>
+            <ul>
+              <li>Best for developers and technical handoff.</li>
+              <li>More exact control over each ability.</li>
+              <li>Longer but more detailed.</li>
+            </ul>
           </div>
+          <button class="secondary" data-view="advanced">Open detailed builder</button>
+        </div>
+      </div>
+    </section>
 
-          <div class="step">
-            <h2><span class="stepnum">3</span>Choose what the AI can do</h2>
-            <p class="small">Click an ability to add it. You can remove or edit it below.</p>
-            <div id="abilities" class="abilitygrid"></div>
-            <div class="btns">
-              <button class="secondary" id="addCustomAction">Add custom action</button>
-              <button class="secondary" id="addCustomRead">Add readable source</button>
-              <button class="secondary" id="addCustomInstruction">Add saved instruction</button>
+    <section id="simple" class="view">
+      <section class="layout">
+        <div>
+          <section class="panel">
+            <div class="step">
+              <h2><span class="stepnum">1</span>Name the integration</h2>
+              <label for="plainName">Integration name</label>
+              <input id="plainName" autocomplete="off" value="">
+              <p class="small">Example: sales-assistant, shop-helper, client-tracker</p>
             </div>
-          </div>
 
-          <div class="step">
-            <h2><span class="stepnum">4</span>Add the real connection links</h2>
-            <p class="small">Only fill what the selected abilities need. The app will not export a package until required links are real.</p>
-            <div id="rows" class="rows"></div>
-          </div>
+            <div class="step">
+              <h2><span class="stepnum">2</span>Choose a ready workflow</h2>
+              <p class="small">Each workflow adds real MCP abilities. Nothing is guessed or filled with hidden services.</p>
+              <div id="simpleWorkflows" class="templates"></div>
+            </div>
 
-          <div class="step">
-            <h2><span class="stepnum">5</span>Safety</h2>
-            <label class="check">
-              <input type="checkbox" id="approval" checked>
-              <span><b>Ask before changing business data</b><br><small>Create, edit, and delete actions will require approval text before running.</small></span>
-            </label>
-            <label class="check">
-              <input type="checkbox" id="paused">
-              <span><b>Start paused</b><br><small>The integration exports safely turned off until enabled.</small></span>
-            </label>
-          </div>
+            <div class="step">
+              <h2><span class="stepnum">3</span>Review abilities</h2>
+              <div id="simpleRows" class="rows"></div>
+            </div>
 
-          <div class="btns">
-            <button id="build">Check and create package</button>
-            <button class="secondary" id="reset">Start over</button>
-          </div>
-          <div id="msg"></div>
-        </section>
+            <div class="step">
+              <h2><span class="stepnum">4</span>Add real links and export</h2>
+              <p class="small">The export stays blocked until every action or source has a real http or https link.</p>
+              <label class="check">
+                <input type="checkbox" id="simpleApproval" checked>
+                <span><b>Ask before changing business data</b><br><small>Recommended for create, edit, and delete actions.</small></span>
+              </label>
+              <label class="check">
+                <input type="checkbox" id="simplePaused">
+                <span><b>Start paused</b><br><small>Exports turned off until enabled.</small></span>
+              </label>
+              <div class="btns">
+                <button id="simpleBuild">Create MCP package</button>
+                <button class="secondary" id="simpleClear">Clear simple path</button>
+              </div>
+              <div id="simpleMsg"></div>
+            </div>
+          </section>
 
-        <section class="out">
-          <h2>Exported package</h2>
-          <div id="output" class="empty">Complete the steps above. When everything is ready, your package files will appear here.</div>
-        </section>
-      </div>
-
-      <aside class="side">
-        <h2>Non-dev guide</h2>
-        <ol>
-          <li><b>Choose a template.</b> This only helps you start. It does not secretly connect to that app.</li>
-          <li><b>Add abilities.</b> An ability is something the AI is allowed to do, such as “add a lead”.</li>
-          <li><b>Paste real links.</b> A public read link can be a normal page. Private actions usually need a secure secret name.</li>
-          <li><b>Use the readiness check.</b> Green means exportable. Red means something real is missing.</li>
-          <li><b>Run or hand off.</b> Copy the terminal script or download the files.</li>
-        </ol>
-
-        <details>
-          <summary>What is MCP?</summary>
-          <p>MCP is a standard way for an AI app to use approved abilities and approved information sources. Think of it as a controlled adapter between your AI and your business tools.</p>
-        </details>
-
-        <details>
-          <summary>What is a secure secret name?</summary>
-          <p>It is not the password itself. It is the name of a saved password or access token inside your computer or hosting account, for example COMPANY_API_TOKEN.</p>
-        </details>
-
-        <details>
-          <summary>Why do I still need links?</summary>
-          <p>A local file cannot log in to business apps by magic. To make a real integration, the generated MCP needs a real place to read from or send requests to.</p>
-        </details>
-
-        <div id="readiness" class="readiness"></div>
-      </aside>
+          <section class="out">
+            <h2>Simple path output</h2>
+            <div id="simpleOutput" class="empty">Choose a workflow, add real links, then export.</div>
+          </section>
+        </div>
+        <aside class="side">
+          <h2>Why this is easier</h2>
+          <p>You choose a practical workflow first. The app creates the matching MCP abilities, then asks only for the real links and secure secret names needed to run them.</p>
+          <div class="notice">This is a local package creator. Real app login, hosted runtime, and one-click cloud deployment require a backend product, so they are not shown as local-file features.</div>
+          <div id="simpleReady" class="readiness"></div>
+        </aside>
+      </section>
     </section>
 
-    <p class="footer">MCP Creator Simple runs locally in your browser. It does not upload your entries anywhere.<br>By Robomarket.ae<br>(C) all rights reserved</p>
+    <section id="advanced"<section id="advanced" class="view">
+      <section class="layout">
+        <div>
+          <section class="panel">
+            <div class="step">
+              <h2><span class="stepnum">1</span>Name the integration</h2>
+              <label for="project">What should we call it?</label>
+              <input id="project" autocomplete="off" inputmode="latin" value="">
+              <p class="small">Example: sales-assistant, invoice-helper, product-catalog-ai</p>
+            </div>
+
+            <div class="step">
+              <h2><span class="stepnum">2</span>Choose what it connects to</h2>
+              <div id="templates" class="templates"></div>
+            </div>
+
+            <div class="step">
+              <h2><span class="stepnum">3</span>Choose what the AI can do</h2>
+              <p class="small">Click an ability to add it. You can remove or edit it below.</p>
+              <div id="abilities" class="abilitygrid"></div>
+              <div class="btns">
+                <button class="secondary" id="addCustomAction">Add custom action</button>
+                <button class="secondary" id="addCustomRead">Add readable source</button>
+                <button class="secondary" id="addCustomInstruction">Add saved instruction</button>
+              </div>
+            </div>
+
+            <div class="step">
+              <h2><span class="stepnum">4</span>Add the real connection links</h2>
+              <p class="small">Only fill what the selected abilities need. The app will not export a package until required links are real.</p>
+              <div id="rows" class="rows"></div>
+            </div>
+
+            <div class="step">
+              <h2><span class="stepnum">5</span>Safety</h2>
+              <label class="check">
+                <input type="checkbox" id="approval" checked>
+                <span><b>Ask before changing business data</b><br><small>Create, edit, and delete actions will require approval text before running.</small></span>
+              </label>
+              <label class="check">
+                <input type="checkbox" id="paused">
+                <span><b>Start paused</b><br><small>The integration exports safely turned off until enabled.</small></span>
+              </label>
+            </div>
+
+            <div class="btns">
+              <button id="build">Check and create package</button>
+              <button class="secondary" id="reset">Start over</button>
+            </div>
+            <div id="msg"></div>
+          </section>
+
+          <section class="out">
+            <h2>Developer path output</h2>
+            <div id="output" class="empty">Complete the steps above. When everything is ready, your package files will appear here.</div>
+          </section>
+        </div>
+
+        <aside class="side">
+          <h2>Developer path guide</h2>
+          <ol>
+            <li><b>Choose a template.</b> It helps you start. It does not secretly connect to that app.</li>
+            <li><b>Add abilities.</b> An ability is something the AI is allowed to do.</li>
+            <li><b>Paste real links.</b> A public read link can be a normal page. Private actions usually need a secure secret name.</li>
+            <li><b>Use the readiness check.</b> Green means exportable. Red means something real is missing.</li>
+            <li><b>Run or hand off.</b> Copy the terminal script or download the files.</li>
+          </ol>
+          <details><summary>What is MCP?</summary><p>MCP is a standard way for an AI app to use approved abilities and approved information sources. Think of it as a controlled adapter between your AI and your business tools.</p></details>
+          <details><summary>What is a secure secret name?</summary><p>It is not the password itself. It is the name of a saved password or access token inside your computer or hosting account, for example COMPANY_API_TOKEN.</p></details>
+          <details><summary>Why do I still need links?</summary><p>A local file cannot log in to business apps by magic. To make a real integration, the generated MCP needs a real place to read from or send requests to.</p></details>
+          <div id="readiness" class="readiness"></div>
+        </aside>
+      </section>
+    </section>
+
+    <p class="footer">MCP Creator runs locally in your browser. It does not upload your entries anywhere.<br>By Robomarket.ae<br>(C) all rights reserved</p>
   </main>
 
 <script>
@@ -244,28 +314,104 @@
     ]}
   ];
 
-  const state = {template:"custom", rows:[], counter:1};
-  const $ = id => document.getElementById(id);
 
-  function slug(text){
-    return String(text || "").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+  const simpleWorkflows = [
+    {
+      id:"lead-tracker",
+      title:"Lead tracker",
+      desc:"Search leads, add a lead, update lead status.",
+      rows:[
+        {kind:"action", label:"Search leads", method:"GET"},
+        {kind:"action", label:"Add lead", method:"POST"},
+        {kind:"action", label:"Update lead status", method:"PATCH"}
+      ]
+    },
+    {
+      id:"product-helper",
+      title:"Product helper",
+      desc:"Search products, update product details, read catalog.",
+      rows:[
+        {kind:"action", label:"Search products", method:"GET"},
+        {kind:"action", label:"Update product", method:"PATCH"},
+        {kind:"read", label:"Read product catalog", method:"GET"}
+      ]
+    },
+    {
+      id:"knowledge-reader",
+      title:"Knowledge reader",
+      desc:"Read approved pages and answer from source material.",
+      rows:[
+        {kind:"read", label:"Read approved source", method:"GET"},
+        {kind:"instruction", label:"Answer only from approved sources", method:"GET"}
+      ]
+    },
+    {
+      id:"email-workflow",
+      title:"Email workflow",
+      desc:"Search messages and create draft replies.",
+      rows:[
+        {kind:"action", label:"Search messages", method:"GET"},
+        {kind:"action", label:"Create draft reply", method:"POST"},
+        {kind:"instruction", label:"Summarize email thread", method:"GET"}
+      ]
+    }
+  ];
+
+  const states = {
+    advanced:{template:"custom", rows:[], counter:1, projectId:"project", rowsId:"rows", readyId:"readiness", outputId:"output", approvalId:"approval", pausedId:"paused", msgId:"msg"},
+    simple:{template:"plain", rows:[], counter:1, projectId:"plainName", rowsId:"simpleRows", readyId:"simpleReady", outputId:"simpleOutput", approvalId:"simpleApproval", pausedId:"simplePaused", msgId:"simpleMsg"}
+  };
+  const $ = id => document.getElementById(id);
+  const qsa = selector => Array.from(document.querySelectorAll(selector));
+
+  function showView(id){
+    qsa(".view").forEach(v => v.classList.toggle("active", v.id === id));
+    qsa("[data-view]").forEach(b => {
+      const active = b.dataset.view === id;
+      b.classList.toggle("secondary", !active && b.dataset.view !== "simple");
+    });
   }
+
+  qsa("[data-view]").forEach(btn => btn.addEventListener("click", () => showView(btn.dataset.view)));
+
+  function slug(text){ return String(text || "").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); }
   function op(text){ return slug(text).replace(/-/g,"_"); }
-  function html(text){ return String(text).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch])); }
-  function code(text){ return String(text || "").replace(/`/g,"\\`").replace(/\$\{/g,"\\${"); }
-  function validUrl(text){
-    try{ const u = new URL(text); return u.protocol === "http:" || u.protocol === "https:"; }catch(e){ return false; }
-  }
+  function esc(text){ return String(text).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch])); }
+  function ts(value){ return JSON.stringify(String(value || "")); }
+  function validUrl(text){ try{ const u = new URL(text); return u.protocol === "http:" || u.protocol === "https:"; }catch(e){ return false; } }
   function validEnv(text){ return !text || /^[A-Z][A-Z0-9_]*$/.test(text); }
   function validResource(text){ return /^[a-z][a-z0-9+.-]*:\/\/[^\s]+$/i.test(String(text || "")); }
 
-  function renderTemplates(){
-    $("templates").innerHTML = templates.map(t => (
-      `<div class="tpl" role="button" tabindex="0" data-template="${html(t.id)}" aria-selected="${state.template===t.id}">
-        <strong>${html(t.title)}</strong><span>${html(t.desc)}</span>
+
+  function renderSimpleWorkflows(){
+    $("simpleWorkflows").innerHTML = simpleWorkflows.map(flow => (
+      `<div class="tpl" role="button" tabindex="0" data-simple-flow="${esc(flow.id)}">
+        <strong>${esc(flow.title)}</strong><span>${esc(flow.desc)}</span>
       </div>`
     )).join("");
-    document.querySelectorAll("[data-template]").forEach(card => {
+    qsa("[data-simple-flow]").forEach(card => {
+      const choose = () => {
+        const flow = simpleWorkflows.find(f => f.id === card.dataset.simpleFlow);
+        if(!flow) return;
+        states.simple.rows = flow.rows.map(row => makeRow(states.simple, row.kind, row.label, row.method));
+        qsa("[data-simple-flow]").forEach(item => item.setAttribute("aria-selected", String(item === card)));
+        renderRows(states.simple);
+        updateReadiness(states.simple);
+      };
+      card.addEventListener("click", choose);
+      card.addEventListener("keydown", e => {
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); choose(); }
+      });
+    });
+  }
+
+  function renderTemplates(){
+    $("templates").innerHTML = templates.map(t => (
+      `<div class="tpl" role="button" tabindex="0" data-template="${esc(t.id)}" aria-selected="${states.advanced.template===t.id}">
+        <strong>${esc(t.title)}</strong><span>${esc(t.desc)}</span>
+      </div>`
+    )).join("");
+    qsa("[data-template]").forEach(card => {
       card.addEventListener("click", () => chooseTemplate(card.dataset.template));
       card.addEventListener("keydown", e => {
         if(e.key === "Enter" || e.key === " "){ e.preventDefault(); chooseTemplate(card.dataset.template); }
@@ -274,42 +420,42 @@
   }
 
   function chooseTemplate(id){
-    state.template = id;
+    states.advanced.template = id;
     renderTemplates();
     renderAbilities();
-    updateReadiness();
+    updateReadiness(states.advanced);
   }
 
   function currentTemplate(){
-    return templates.find(t => t.id === state.template) || templates[0];
+    return templates.find(t => t.id === states.advanced.template) || templates[0];
   }
 
   function renderAbilities(){
     const t = currentTemplate();
     $("abilities").innerHTML = t.abilities.map((a, idx) => {
-      const existing = state.rows.some(r => r.label === a.label && r.kind === a.kind);
+      const existing = states.advanced.rows.some(r => r.label === a.label && r.kind === a.kind);
       return `<button class="ability" type="button" data-ability="${idx}" aria-pressed="${existing}">
-        <strong>${html(a.label)}</strong>
+        <strong>${esc(a.label)}</strong>
         <span>${a.kind === "read" ? "AI may read approved information." : a.kind === "instruction" ? "Reusable instruction for the AI." : "AI may perform this action."}</span>
       </button>`;
     }).join("");
-    document.querySelectorAll("[data-ability]").forEach(btn => {
+    qsa("[data-ability]").forEach(btn => {
       btn.addEventListener("click", () => {
         const ability = currentTemplate().abilities[Number(btn.dataset.ability)];
-        const exists = state.rows.find(r => r.label === ability.label && r.kind === ability.kind);
+        const exists = states.advanced.rows.find(r => r.label === ability.label && r.kind === ability.kind);
         if(exists){
-          state.rows = state.rows.filter(r => r.id !== exists.id);
+          states.advanced.rows = states.advanced.rows.filter(r => r.id !== exists.id);
         }else{
-          state.rows.push(makeRow(ability.kind, ability.label, ability.method || "GET"));
+          states.advanced.rows.push(makeRow(states.advanced, ability.kind, ability.label, ability.method || "GET"));
         }
         renderAbilities();
-        renderRows();
-        updateReadiness();
+        renderRows(states.advanced);
+        updateReadiness(states.advanced);
       });
     });
   }
 
-  function makeRow(kind, label, method){
+  function makeRow(state, kind, label, method){
     const id = state.counter++;
     const name = op(label || `ability ${id}`);
     return {
@@ -319,99 +465,64 @@
     };
   }
 
-  function renderRows(){
+  function renderRows(state){
     if(!state.rows.length){
-      $("rows").innerHTML = `<div class="empty">No abilities added yet. Choose one above or add a custom ability.</div>`;
+      $(state.rowsId).innerHTML = `<div class="empty">No abilities added yet. Choose one above or add a custom ability.</div>`;
       return;
     }
-    $("rows").innerHTML = state.rows.map(row => {
-      const top = `<div class="rowbox" data-row="${row.id}">
-        <div class="rowtop"><div><span class="pill">${row.kind==="read" ? "Readable data" : row.kind==="instruction" ? "Saved instruction" : "Action"}</span></div><button class="remove" type="button" data-remove="${row.id}">Remove</button></div>
+    $(state.rowsId).innerHTML = state.rows.map(row => {
+      const top = `<div class="rowbox" data-row="${row.id}" data-scope="${state === states.simple ? "simple" : "advanced"}">
+        <div class="rowtop"><div><span class="pill">${row.kind==="read" ? "Readable data" : row.kind==="instruction" ? "Saved instruction" : "Action"}</span></div><button class="remove" type="button" data-remove="${row.id}" data-scope="${state === states.simple ? "simple" : "advanced"}">Remove</button></div>
         <label>Plain name</label>
-        <input data-field="label" value="${html(row.label)}">`;
+        <input data-field="label" value="${esc(row.label)}">`;
 
       if(row.kind === "instruction"){
-        return top + `
-          <label>Instruction text</label>
-          <textarea data-field="instruction">${html(row.instruction)}</textarea>
-          <p class="small">This does not call an app. It gives the AI a reusable way to respond.</p>
-        </div>`;
+        return top + `<label>Instruction text</label><textarea data-field="instruction">${esc(row.instruction)}</textarea><p class="small">This does not call an app. It gives the AI a reusable way to respond.</p></div>`;
       }
 
       if(row.kind === "read"){
-        return top + `
-          <label>Real page or source link</label>
-          <input data-field="link" value="${html(row.link)}">
-          <p class="small">Must start with http or https.</p>
-          <label>Readable source name</label>
-          <input data-field="source" value="${html(row.source)}">
-          <p class="small">Example: business://product-catalog</p>
-          <label>Secure secret name, only if private</label>
-          <input data-field="secret" value="${html(row.secret)}">
-          <p class="small">Example: COMPANY_API_TOKEN. Leave empty for public pages.</p>
-        </div>`;
+        return top + `<label>Real page or source link</label><input data-field="link" value="${esc(row.link)}"><p class="small">Must start with http or https.</p><label>Readable source name</label><input data-field="source" value="${esc(row.source)}"><p class="small">Example: business://product-catalog</p><label>Secure secret name, only if private</label><input data-field="secret" value="${esc(row.secret)}"><p class="small">Example: COMPANY_API_TOKEN. Leave empty for public pages.</p></div>`;
       }
 
-      return top + `
-        <label>Real app action link</label>
-        <input data-field="link" value="${html(row.link)}">
-        <p class="small">Must start with http or https. This is the real place the MCP sends the action.</p>
-        <details>
-          <summary>Advanced settings</summary>
-          <div class="grid2">
-            <div>
-              <label>What happens</label>
-              <select data-field="method">
-                ${opt("GET", row.method, "Read/search")}
-                ${opt("POST", row.method, "Create")}
-                ${opt("PATCH", row.method, "Update")}
-                ${opt("PUT", row.method, "Replace")}
-                ${opt("DELETE", row.method, "Delete")}
-              </select>
-            </div>
-            <div>
-              <label>Secure secret name, if private</label>
-              <input data-field="secret" value="${html(row.secret)}">
-            </div>
-          </div>
-        </details>
-      </div>`;
+      return top + `<label>Real app action link</label><input data-field="link" value="${esc(row.link)}"><p class="small">Must start with http or https. This is the real place the MCP sends the action.</p><details><summary>Advanced settings</summary><div class="grid2"><div><label>What happens</label><select data-field="method">${opt("GET", row.method, "Read/search")}${opt("POST", row.method, "Create")}${opt("PATCH", row.method, "Update")}${opt("PUT", row.method, "Replace")}${opt("DELETE", row.method, "Delete")}</select></div><div><label>Secure secret name, if private</label><input data-field="secret" value="${esc(row.secret)}"></div></div></details></div>`;
     }).join("");
 
-    document.querySelectorAll("[data-field]").forEach(field => {
+    $(state.rowsId).querySelectorAll("[data-field]").forEach(field => {
       field.addEventListener("input", updateRow);
       field.addEventListener("change", updateRow);
     });
-    document.querySelectorAll("[data-remove]").forEach(btn => {
+    $(state.rowsId).querySelectorAll("[data-remove]").forEach(btn => {
       btn.addEventListener("click", () => {
-        state.rows = state.rows.filter(r => r.id !== Number(btn.dataset.remove));
-        renderRows(); renderAbilities(); updateReadiness();
+        const s = btn.dataset.scope === "simple" ? states.simple : states.advanced;
+        s.rows = s.rows.filter(r => r.id !== Number(btn.dataset.remove));
+        renderRows(s);
+        if(s === states.advanced) renderAbilities();
+        updateReadiness(s);
       });
     });
   }
 
-  function opt(value, current, label){
-    return `<option value="${value}" ${value===current ? "selected" : ""}>${label}</option>`;
-  }
+  function opt(value, current, label){ return `<option value="${value}" ${value===current ? "selected" : ""}>${label}</option>`; }
 
   function updateRow(e){
     const box = e.target.closest("[data-row]");
+    const state = box.dataset.scope === "simple" ? states.simple : states.advanced;
     const row = state.rows.find(r => r.id === Number(box.dataset.row));
     if(!row) return;
     row[e.target.dataset.field] = e.target.value;
     if(e.target.dataset.field === "label" && row.kind === "read" && row.source.startsWith("business://")){
       row.source = `business://${op(row.label)}`;
-      renderRows();
+      renderRows(state);
     }
-    updateReadiness();
+    if(state === states.advanced) renderAbilities();
+    updateReadiness(state);
   }
 
-  function check(){
+  function check(state){
     const issues = [];
-    const project = slug($("project").value);
+    const project = slug($(state.projectId).value);
     if(!project) issues.push("Name the integration.");
     if(!state.rows.length) issues.push("Choose at least one ability.");
-
     const names = new Set();
     const sources = new Set();
     state.rows.forEach(row => {
@@ -419,8 +530,7 @@
       if(!name) issues.push("Every ability needs a plain name.");
       if(names.has(name)) issues.push(`Use unique ability names. Duplicate: ${row.label}`);
       names.add(name);
-      if(!validEnv(row.secret)) issues.push(`Secret name is not valid for: ${row.label}`);
-
+      if(!validEnv(row.secret)) issues.push(`Secure secret name is not valid for: ${row.label}`);
       if(row.kind === "action" && !validUrl(row.link)) issues.push(`Add a real action link for: ${row.label}`);
       if(row.kind === "read"){
         if(!validUrl(row.link)) issues.push(`Add a real readable source link for: ${row.label}`);
@@ -433,105 +543,90 @@
     return {ok:!issues.length, issues, project};
   }
 
-  function updateReadiness(){
-    const result = check();
-    const items = [];
-    items.push({ok:!!slug($("project").value), text:"Integration has a name"});
-    items.push({ok:state.rows.length>0, text:"At least one AI ability is selected"});
-    items.push({ok:state.rows.filter(r => r.kind !== "instruction").every(r => validUrl(r.link)), text:"All required app/source links are real http or https links"});
-    items.push({ok:state.rows.every(r => validEnv(r.secret)), text:"Secure secret names are valid"});
-    $("readiness").innerHTML = `<h2>Readiness check</h2>` + items.map(item => (
-      `<div class="readyitem ${item.ok ? "good" : "bad"}"><b>${item.ok ? "✓" : "!"}</b><span>${html(item.text)}</span></div>`
-    )).join("");
+  function updateReadiness(state){
+    const items = [
+      {ok:!!slug($(state.projectId).value), text:"Integration has a name"},
+      {ok:state.rows.length>0, text:"At least one AI ability is selected"},
+      {ok:state.rows.filter(r => r.kind !== "instruction").every(r => validUrl(r.link)), text:"All required app/source links are real http or https links"},
+      {ok:state.rows.every(r => validEnv(r.secret)), text:"Secure secret names are valid"}
+    ];
+    $(state.readyId).innerHTML = `<h2>Readiness check</h2>` + items.map(item => `<div class="readyitem ${item.ok ? "good" : "bad"}"><b>${item.ok ? "✓" : "!"}</b><span>${esc(item.text)}</span></div>`).join("");
   }
 
-  function secrets(){
+  function secrets(state){
     const set = new Set();
     state.rows.forEach(r => { if(r.secret) set.add(r.secret); });
-    if($("paused").checked) set.add("MCP_CREATOR_ENABLED");
     return Array.from(set).sort();
   }
 
-  function normalized(){
+  function normalized(state){
     return state.rows.map(r => ({
       kind:r.kind, name:op(r.label), label:r.label.trim(), method:r.method,
       link:r.link.trim(), secret:r.secret.trim(), source:r.source.trim(), instruction:r.instruction.trim()
     }));
   }
 
-  function build(){
-    const result = check();
+  function approvalRequired(state, action){
+    return $(state.approvalId).checked && ["POST","PUT","PATCH","DELETE"].includes(action.method);
+  }
+
+  function build(state){
+    const result = check(state);
     if(!result.ok){
-      $("msg").innerHTML = `<div class="notice bad">${result.issues.map(html).join("<br>")}</div>`;
-      updateReadiness();
+      $(state.msgId).innerHTML = `<div class="notice bad">${result.issues.map(esc).join("<br>")}</div>`;
+      updateReadiness(state);
       return;
     }
 
     const project = result.project;
-    const rows = normalized();
+    const rows = normalized(state);
     const actions = rows.filter(r => r.kind === "action");
     const reads = rows.filter(r => r.kind === "read");
     const instructions = rows.filter(r => r.kind === "instruction");
-    const secretList = secrets();
+    const secretList = secrets(state);
 
     const files = {
       "Project map": projectMap(project, actions, reads, instructions, secretList),
-      "One terminal script": shell(project, pkg(project), tsconfig(), source(project, actions, reads, instructions), mcpConfig(project, secretList), readme(project, actions, reads, instructions, secretList)),
+      "One terminal script": shell(state, project, pkg(project), tsconfig(), source(state, project, actions, reads, instructions), mcpConfig(project, secretList), readme(state, project, actions, reads, instructions, secretList)),
       "package.json": pkg(project),
       "tsconfig.json": tsconfig(),
-      "src/index.ts": source(project, actions, reads, instructions),
+      "src/index.ts": source(state, project, actions, reads, instructions),
       ".vscode/mcp.json": mcpConfig(project, secretList),
-      "README.md": readme(project, actions, reads, instructions, secretList),
+      "README.md": readme(state, project, actions, reads, instructions, secretList),
       "Plain test plan": testPlan(actions, reads, instructions)
     };
-    renderOutput(project, actions, reads, instructions, secretList, files);
-    $("msg").innerHTML = `<div class="notice good">Package created. Start with the terminal script and README.</div>`;
+    renderOutput(state, project, actions, reads, instructions, secretList, files);
+    $(state.msgId).innerHTML = `<div class="notice good">Package created. Start with the terminal script and README.</div>`;
   }
 
   function pkg(project){
-    return JSON.stringify({
-      name:project, version:"1.0.0", type:"module",
-      scripts:{build:"tsc", start:"node build/index.js"},
-      dependencies:{"@modelcontextprotocol/sdk":"1.29.0","zod":"^3.25.0"},
-      devDependencies:{"@types/node":"^22.10.0","typescript":"^5.7.0"},
-      engines:{node:">=20.0.0"}
-    }, null, 2);
+    return JSON.stringify({name:project,version:"1.0.0",type:"module",scripts:{build:"tsc",start:"node build/index.js"},dependencies:{"@modelcontextprotocol/sdk":"1.29.0","zod":"^3.25.0"},devDependencies:{"@types/node":"^22.10.0","typescript":"^5.7.0"},engines:{node:">=20.0.0"}}, null, 2);
   }
 
   function tsconfig(){
-    return JSON.stringify({
-      compilerOptions:{
-        target:"ES2022", module:"NodeNext", moduleResolution:"NodeNext",
-        outDir:"build", rootDir:"src", strict:true, esModuleInterop:true,
-        skipLibCheck:true, forceConsistentCasingInFileNames:true
-      },
-      include:["src"]
-    }, null, 2);
+    return JSON.stringify({compilerOptions:{target:"ES2022",module:"NodeNext",moduleResolution:"NodeNext",outDir:"build",rootDir:"src",strict:true,esModuleInterop:true,skipLibCheck:true,forceConsistentCasingInFileNames:true},include:["src"]}, null, 2);
   }
 
-  function approvalRequired(action){
-    return $("approval").checked && ["POST","PUT","PATCH","DELETE"].includes(action.method);
-  }
-
-  function actionCode(action){
+  function actionCode(state, action){
     const bodyMethod = ["POST","PUT","PATCH"].includes(action.method);
-    const approval = approvalRequired(action) ? `
+    const approval = approvalRequired(state, action) ? `
       if (input.confirm_change !== true) {
         return {
           isError: true,
-          content: [{ type: "text", text: "This action can change business data. Run again with confirm_change=true after the user approves." }]
+          content: [{ type: "text" as const, text: "This action can change business data. Run again with confirm_change=true after the user approves." }]
         };
-      }` : "";
+      }
+      delete input.confirm_change;` : "";
     const auth = action.secret ? `
-      const token = process.env["${code(action.secret)}"];
-      if (!token) throw new Error("Missing required secret: ${code(action.secret)}");
+      const token = process.env[${ts(action.secret)}];
+      if (!token) throw new Error("Missing required secret: ${action.secret}");
       headers.set("Authorization", \`Bearer \${token}\`);` : "";
     return `
 server.registerTool(
-  "${code(action.name)}",
+  ${ts(action.name)},
   {
-    title: "${code(action.label)}",
-    description: "Approved action: ${code(action.label)}",
+    title: ${ts(action.label)},
+    description: ${ts("Approved action: " + action.label)},
     inputSchema: {
       input: z.record(z.unknown()).describe("Information for this action")
     }
@@ -539,25 +634,16 @@ server.registerTool(
   async ({ input }) => {
     try {
       ensureEnabled();
-      const cleanInput: Record<string, unknown> = { ...input };
-      ${approval}
-      delete cleanInput.confirm_change;
-
-      const usedPathKeys = new Set<string>();
-      const finalUrl = "${code(action.link)}".replace(/\{([^}]+)\}/g, (_match, key: string) => {
+      const cleanInput: Record<string, unknown> = { ...input };${approval}
+      const finalUrl = ${ts(action.link)}.replace(/\\{([^}]+)\\}/g, (_match, key: string) => {
         const value = cleanInput[key];
         if (value === undefined || value === null || value === "") {
           throw new Error(\`Missing value for link field: \${key}\`);
         }
-        usedPathKeys.add(key);
         delete cleanInput[key];
         return encodeURIComponent(String(value));
       });
       const url = new URL(finalUrl);
-      if (/\{[^}]+\}/.test(url.href)) {
-        throw new Error("The action link still contains an unresolved value in braces.");
-      }
-
       const headers = new Headers();
       headers.set("Accept", "application/json, text/plain;q=0.9, */*;q=0.8");${bodyMethod ? '\n      headers.set("Content-Type", "application/json");' : ""}${auth}
       ${bodyMethod ? `const request: RequestInit = { method: "${action.method}", headers, body: JSON.stringify(cleanInput) };` : `for (const [key, value] of Object.entries(cleanInput)) {
@@ -567,11 +653,11 @@ server.registerTool(
       const response = await fetch(url, request);
       const text = await response.text();
       if (!response.ok) {
-        return { isError: true, content: [{ type: "text", text: \`Action failed with HTTP \${response.status}: \${text.slice(0, 1000)}\` }] };
+        return { isError: true, content: [{ type: "text" as const, text: \`Action failed with HTTP \${response.status}: \${text.slice(0, 1000)}\` }] };
       }
       return asMcpText(text);
     } catch (error) {
-      return { isError: true, content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }] };
+      return { isError: true, content: [{ type: "text" as const, text: error instanceof Error ? error.message : String(error) }] };
     }
   }
 );`;
@@ -579,22 +665,22 @@ server.registerTool(
 
   function readCode(item){
     const auth = item.secret ? `
-    const token = process.env["${code(item.secret)}"];
-    if (!token) throw new Error("Missing required secret: ${code(item.secret)}");
+    const token = process.env[${ts(item.secret)}];
+    if (!token) throw new Error("Missing required secret: ${item.secret}");
     headers.set("Authorization", \`Bearer \${token}\`);` : "";
     return `
 server.registerResource(
-  "${code(item.name)}",
-  "${code(item.source)}",
+  ${ts(item.name)},
+  ${ts(item.source)},
   {
-    title: "${code(item.label)}",
+    title: ${ts(item.label)},
     description: "Approved readable source"
   },
   async (uri) => {
     ensureEnabled();
     const headers = new Headers();
     headers.set("Accept", "application/json, text/plain;q=0.9, */*;q=0.8");${auth}
-    const response = await fetch("${code(item.link)}", { method: "GET", headers });
+    const response = await fetch(${ts(item.link)}, { method: "GET", headers });
     const text = await response.text();
     if (!response.ok) throw new Error(\`Readable source failed with HTTP \${response.status}: \${text.slice(0, 1000)}\`);
     return { contents: [{ uri: uri.href, text }] };
@@ -605,41 +691,41 @@ server.registerResource(
   function promptCode(item){
     return `
 server.registerPrompt(
-  "${code(item.name)}",
+  ${ts(item.name)},
   {
-    title: "${code(item.label)}",
-    description: "Saved instruction: ${code(item.label)}",
+    title: ${ts(item.label)},
+    description: ${ts("Saved instruction: " + item.label)},
     argsSchema: {
       topic: z.string().describe("User request")
     }
   },
   ({ topic }) => ({
     messages: [{
-      role: "user",
+      role: "user" as const,
       content: {
-        type: "text",
-        text: \`${code(item.instruction)}\\n\\nUser request: \${topic}\`
+        type: "text" as const,
+        text: ${ts(item.instruction + "\\n\\nUser request: ")} + topic
       }
     }]
   })
 );`;
   }
 
-  function source(project, actions, reads, instructions){
-    const enabled = $("paused").checked ? "false" : "true";
+  function source(state, project, actions, reads, instructions){
+    const enabled = $(state.pausedId).checked ? "false" : "true";
     return `import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
 const server = new McpServer({
-  name: "${code(project)}",
+  name: ${ts(project)},
   version: "1.0.0"
 });
 
 function ensureEnabled(): void {
   const enabled = process.env.MCP_CREATOR_ENABLED ?? "${enabled}";
   if (enabled !== "true") {
-    throw new Error("This MCP integration is paused. Set MCP_CREATOR_ENABLED=true to enable it.");
+    throw new Error("This MCP integration is paused. Set MCP_CREATOR_ENABLED=true to enable it, or MCP_CREATOR_ENABLED=false to keep it off.");
   }
 }
 
@@ -654,7 +740,7 @@ function asMcpText(text: string) {
     return { content: [{ type: "text" as const, text }] };
   }
 }
-${actions.map(actionCode).join("\n")}
+${actions.map(a => actionCode(state, a)).join("\n")}
 ${reads.map(readCode).join("\n")}
 ${instructions.map(promptCode).join("\n")}
 
@@ -692,31 +778,24 @@ Secure secret names:
 ${secretList.length ? secretList.map(s => `• ${s}`).join("\n") : "• None"}`;
   }
 
-  function shell(project, pkgText, tsText, srcText, mcpText, readmeText){
-    const secretList = secrets();
-    const files = {
-      "package.json": pkgText,
-      "tsconfig.json": tsText,
-      "README.md": readmeText,
-      ".vscode/mcp.json": mcpText,
-      "src/index.ts": srcText
-    };
-    const filesJson = JSON.stringify(files, null, 2);
-    const guards = secretList.map(s => `: "\${${s}:?Set ${s} before running this script}"`).join("\n");
+  function shell(state, project, pkgText, tsText, srcText, mcpText, readmeText){
+    const guards = secrets(state).map(s => `if (!process.env[${JSON.stringify(s)}]) { throw new Error("Set ${s} before running this script."); }`).join("\n");
+    const payload = JSON.stringify({"package.json":pkgText,"tsconfig.json":tsText,"README.md":readmeText,".vscode/mcp.json":mcpText,"src/index.ts":srcText});
     return `set -e
 
-mkdir -p ${project}/src ${project}/.vscode
+mkdir -p ${project}
 cd ${project}
-${guards ? guards + "\n" : ""}
-node <<'MCP_CREATOR_WRITE_FILES'
-const fs = require('fs');
-const path = require('path');
-const files = ${filesJson};
-for (const [filePath, content] of Object.entries(files)) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, content, 'utf8');
+
+node <<'NODE'
+const fs = require("fs");
+const path = require("path");
+${guards}
+const files = ${payload};
+for (const [file, content] of Object.entries(files)) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, content, "utf8");
 }
-MCP_CREATOR_WRITE_FILES
+NODE
 
 npm install
 npm run build
@@ -725,15 +804,15 @@ echo "Package ready. Start it with: npm start"
 `;
   }
 
-  function readme(project, actions, reads, instructions, secretList){
+  function readme(state, project, actions, reads, instructions, secretList){
     return `# ${project}
 
-This package was created with MCP Creator Simple.
+This package was created with MCP Creator.
 
 ## What the AI is allowed to do
 
 ### Actions
-${actions.length ? actions.map(a => `- ${a.label}: ${a.method} ${a.link}${approvalRequired(a) ? " - requires approval" : ""}`).join("\n") : "- No actions"}
+${actions.length ? actions.map(a => `- ${a.label}: ${a.method} ${a.link}${approvalRequired(state, a) ? " - requires approval" : ""}`).join("\n") : "- No actions"}
 
 ### Readable data
 ${reads.length ? reads.map(r => `- ${r.label}: ${r.link}`).join("\n") : "- No readable data"}
@@ -755,11 +834,19 @@ npm start
 
 ## Pause or enable
 
+The generated server has a built-in default based on your export setting.
+
+To force it on:
+
 \`\`\`bash
 export MCP_CREATOR_ENABLED=true
 \`\`\`
 
-Use false to pause it.
+To force it off:
+
+\`\`\`bash
+export MCP_CREATOR_ENABLED=false
+\`\`\`
 
 ## Plain test
 
@@ -776,41 +863,40 @@ Start with a harmless read request. For actions that change data, test with non-
     return out.join("\n");
   }
 
-  function renderOutput(project, actions, reads, instructions, secretList, files){
+  function renderOutput(state, project, actions, reads, instructions, secretList, files){
     const names = Object.keys(files);
-    $("output").className = "";
-    $("output").innerHTML = `
+    $(state.outputId).className = "";
+    $(state.outputId).innerHTML = `
       <div class="summary">
-        <div><b>Integration</b><span>${html(project)}</span></div>
+        <div><b>Integration</b><span>${esc(project)}</span></div>
         <div><b>Abilities</b><span>${actions.length + reads.length + instructions.length}</span></div>
-        <div><b>Secrets</b><span>${secretList.length ? html(secretList.join(", ")) : "None"}</span></div>
+        <div><b>Secrets</b><span>${secretList.length ? esc(secretList.join(", ")) : "None"}</span></div>
       </div>
-      <div class="notice good">Export uses only your real entries. No hidden sample service is included.</div>
-      <div class="tabs">${names.map((n,i)=>`<button class="tab" data-tab="${html(n)}" aria-selected="${i===0}">${html(n)}</button>`).join("")}</div>
-      <div>${names.map((n,i)=>block(n,files[n],i===0)).join("")}</div>`;
-    document.querySelectorAll("[data-tab]").forEach(btn => {
+      <div class="notice good">Export uses only your real entries. No hidden service is included.</div>
+      <div class="tabs">${names.map((n,i)=>`<button class="tab" data-tab="${esc(n)}" data-output="${state.outputId}" aria-selected="${i===0}">${esc(n)}</button>`).join("")}</div>
+      <div>${names.map((n,i)=>block(n,files[n],i===0,state.outputId)).join("")}</div>`;
+    $(state.outputId).querySelectorAll("[data-tab]").forEach(btn => {
       btn.addEventListener("click", () => {
         const name = btn.dataset.tab;
-        document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", String(b === btn)));
-        document.querySelectorAll("[data-file]").forEach(f => f.style.display = f.dataset.file === name ? "block" : "none");
+        $(state.outputId).querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", String(b === btn)));
+        $(state.outputId).querySelectorAll("[data-file]").forEach(f => f.style.display = f.dataset.file === name ? "block" : "none");
       });
     });
-    document.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => copyText($(btn.dataset.copy).innerText)));
-    document.querySelectorAll("[data-download]").forEach(btn => btn.addEventListener("click", () => download(btn.dataset.download, files[btn.dataset.download])));
+    $(state.outputId).querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => copyText($(btn.dataset.copy).innerText)));
+    $(state.outputId).querySelectorAll("[data-download]").forEach(btn => btn.addEventListener("click", () => download(btn.dataset.download, files[btn.dataset.download])));
   }
 
-  function block(name, text, show){
-    const id = "file_" + name.replace(/[^a-z0-9]/gi,"_");
-    return `<div class="block" data-file="${html(name)}" style="display:${show ? "block" : "none"}">
-      <div class="blockhead"><span>${html(name)}</span><div><button class="mini" data-copy="${id}">Copy</button> <button class="mini" data-download="${html(name)}">Download</button></div></div>
-      <pre id="${id}">${html(text)}</pre>
+  function block(name, text, show, prefix){
+    const id = `${prefix}_file_` + name.replace(/[^a-z0-9]/gi,"_");
+    return `<div class="block" data-file="${esc(name)}" style="display:${show ? "block" : "none"}">
+      <div class="blockhead"><span>${esc(name)}</span><div><button class="mini" data-copy="${id}">Copy</button> <button class="mini" data-download="${esc(name)}">Download</button></div></div>
+      <pre id="${id}">${esc(text)}</pre>
     </div>`;
   }
 
   function copyText(text){
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-    }else{ fallbackCopy(text); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).catch(() => fallbackCopy(text)); }
+    else fallbackCopy(text);
   }
 
   function fallbackCopy(text){
@@ -827,20 +913,34 @@ Start with a harmless read request. For actions that change data, test with non-
     const a = document.createElement("a");
     a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
-
-  $("addCustomAction").addEventListener("click", () => { state.rows.push(makeRow("action","New action","POST")); renderRows(); renderAbilities(); updateReadiness(); });
-  $("addCustomRead").addEventListener("click", () => { state.rows.push(makeRow("read","New readable source","GET")); renderRows(); renderAbilities(); updateReadiness(); });
-  $("addCustomInstruction").addEventListener("click", () => { state.rows.push(makeRow("instruction","New saved instruction","GET")); renderRows(); renderAbilities(); updateReadiness(); });
-  $("build").addEventListener("click", build);
+  $("simpleBuild").addEventListener("click", () => { build(states.simple); });
+  $("simpleClear").addEventListener("click", () => {
+    $("plainName").value = ""; $("simpleApproval").checked = true; $("simplePaused").checked = false;
+    states.simple.rows = []; states.simple.counter = 1; $("simpleMsg").innerHTML = "";
+    $("simpleOutput").className = "empty"; $("simpleOutput").textContent = "Choose a workflow, add real links, then export.";
+    qsa("[data-simple-flow]").forEach(item => item.setAttribute("aria-selected", "false"));
+    renderRows(states.simple); updateReadiness(states.simple);
+  });
+  $("addCustomAction").addEventListener("click", () => { states.advanced.rows.push(makeRow(states.advanced,"action","New action","POST")); renderRows(states.advanced); renderAbilities(); updateReadiness(states.advanced); });
+  $("addCustomRead").addEventListener("click", () => { states.advanced.rows.push(makeRow(states.advanced,"read","New readable source","GET")); renderRows(states.advanced); renderAbilities(); updateReadiness(states.advanced); });
+  $("addCustomInstruction").addEventListener("click", () => { states.advanced.rows.push(makeRow(states.advanced,"instruction","New saved instruction","GET")); renderRows(states.advanced); renderAbilities(); updateReadiness(states.advanced); });
+  $("build").addEventListener("click", () => { build(states.advanced); });
   $("reset").addEventListener("click", () => {
     $("project").value = ""; $("approval").checked = true; $("paused").checked = false;
-    state.template = "custom"; state.rows = []; state.counter = 1; $("msg").innerHTML = "";
+    states.advanced.template = "custom"; states.advanced.rows = []; states.advanced.counter = 1; $("msg").innerHTML = "";
     $("output").className = "empty"; $("output").textContent = "Complete the steps above. When everything is ready, your package files will appear here.";
-    renderTemplates(); renderAbilities(); renderRows(); updateReadiness();
+    renderTemplates(); renderAbilities(); renderRows(states.advanced); updateReadiness(states.advanced);
   });
-  $("project").addEventListener("input", updateReadiness);
+  $("project").addEventListener("input", () => updateReadiness(states.advanced));
+  $("plainName").addEventListener("input", () => updateReadiness(states.simple));
 
-  renderTemplates(); renderAbilities(); renderRows(); updateReadiness();
+  renderSimpleWorkflows();
+  renderTemplates();
+  renderAbilities();
+  renderRows(states.advanced);
+  renderRows(states.simple);
+  updateReadiness(states.advanced);
+  updateReadiness(states.simple);
 })();
 </script>
 </body>
